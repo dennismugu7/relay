@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Test coverage
+coverage/
+
+# Secrets: never commit real environment files. .env.example is the template.
+.env
+.env.*
+!.env.example
+
+# Packed archives (npm pack output and similar)
+*.tgz
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor and OS files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Spike experiments: only their write-ups in docs/spikes/ are kept
+spikes/
