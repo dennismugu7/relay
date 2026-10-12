@@ -1,0 +1,9 @@
+# Generated or installed files
+node_modules/
+dist/
+coverage/
+package-lock.json
+
+# Markdown docs are written by hand. Prettier would reflow tables and lists
+# and create noisy diffs, so it only formats code and config.
+*.md
