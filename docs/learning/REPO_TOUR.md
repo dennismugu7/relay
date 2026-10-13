@@ -2,9 +2,9 @@
 
 _The builder keeps this up to date. It starts empty and grows with the repo._
 
-**Last updated:** 2026-10-13, after M4 (CLI and templates).
+**Last updated:** 2026-10-13, after M5 (end to end). Stage 1 is done.
 
-A suggested reading order for someone new: `README.md` → `docs/PROJECT_BRIEF.md` → `docs/plans/stage-1.md` → this tour → the newest journal entry.
+A suggested reading order for someone new: `README.md` → `docs/PROJECT_BRIEF.md` → `docs/plans/stage-1.md` → this tour → `docs/learning/stage-1-retrospective.md` → the newest journal entry.
 
 ## Top level
 
@@ -107,7 +107,7 @@ Claude Code runs the built scripts in `dist/bin/` (ADR 0004). Read the source in
 | Path | What it is |
 |---|---|
 | `PROJECT_BRIEF.md` | The why and the what: problem, solution, message protocol, stages, safety rules. |
-| `plans/stage-1.md` | The current plan, milestone by milestone (M0–M5). |
+| `plans/stage-1.md` | The Stage 1 plan, milestone by milestone (M0–M5). Done. |
 | `research/claude-code-mechanics.md` | What the Claude Code docs say about hooks, timeouts, Remote Control and more, and what the M1 spikes proved about each. |
 | `adr/` | Architecture Decision Records: one file per real design choice. `template.md` is the blank form. `0001`: TypeScript and npm workspaces. `0002`: how messages are delivered. `0003`: how the state file is stored. `0004`: how the hooks are launched. `0005`: why there's no background helper. `0006`: what `relay init` writes and how undo works. `0007`: the one-time nudge when the lead's tag isn't first. |
 | `spikes/` | Write-ups of small experiments ("will this work?"), one file each, with real output pasted in. M1 ran seven: |
@@ -122,6 +122,7 @@ Claude Code runs the built scripts in `dist/bin/` (ADR 0004). Read the source in
 | `spikes/009-busy-flag.md` | M3: the busy flag keeps a waiter from interrupting Dennis. |
 | `spikes/010-m3-real-run.md` | M3: two real sessions pass 3 rounds automatically, with both activity logs. |
 | `spikes/011-m4-real-run.md` | M4: `relay init` on a fresh project, 3 automatic rounds, and a real undo. |
+| `spikes/012-m5-end-to-end.md` | M5: a realistic project, 7 rounds unattended, with the full activity log. Closes Stage 1. |
 | `BACKLOG.md` | Ideas and side issues noticed while working, parked so they don't distract. |
 | `learning/` | Study material. See below. |
 
@@ -132,7 +133,8 @@ Claude Code runs the built scripts in `dist/bin/` (ADR 0004). Read the source in
 | `README.md` | How to use the learning material. |
 | `REPO_TOUR.md` | This file. |
 | `GLOSSARY.md` | Every technical term, in plain words. |
-| `journal/` | One entry per work session, named by date. First entry: `2026-10-12-repo-foundation.md`. The M1 spikes are explained in `2026-10-13-m1-spikes.md`, the core library in `2026-10-13-m2-core.md`, the hooks in `2026-10-13-m3-hooks.md`, the CLI in `2026-10-13-m4-cli.md`. |
+| `stage-1-retrospective.md` | Stage 1 in one page: what was built, the key decisions, the bugs and lessons, and what to study first. |
+| `journal/` | One entry per work session, named by date. First entry: `2026-10-12-repo-foundation.md`. The M1 spikes are explained in `2026-10-13-m1-spikes.md`, the core library in `2026-10-13-m2-core.md`, the hooks in `2026-10-13-m3-hooks.md`, the CLI in `2026-10-13-m4-cli.md`, the nudge and the M5 run in `2026-10-13-m5-end-to-end.md`. |
 | `bugs/` | One entry per bug fixed: `001` (.gitignore hid the spike docs), `002` (the lead wrote before its tag), `003` (init saved its record before its folder existed). |
 | `templates/` | Blank forms for journal and bug entries. |
 
@@ -141,6 +143,8 @@ Claude Code runs the built scripts in `dist/bin/` (ADR 0004). Read the source in
 - `node_modules/`: installed packages (`npm install` creates it).
 - `packages/*/dist/`: build output.
 - `spikes/`: throwaway experiment code from M1, one folder per spike (`spikes/001/` …). Only the write-ups in `docs/spikes/` are kept. The scripts end in `.cjs` because the repo's `"type": "module"` would otherwise stop them using `require`.
+- `spikes/m5/`: screens and logs saved from the M5 runs (the project is `C:Usersdenniprojectselay-playground`).
+- `spikes/nudge/`: the real-session check of the nudge (ADR 0007).
 - `spikes/m4/`: screens and logs saved from the M4 real run (the project itself lived in `C:\Users\denni\relay-sandbox\m4-app`).
 - `spikes/m3/`, `spikes/m3b/`: the hand-made lead and builder folders (config, settings, minimal `CLAUDE.md`) for the M3 real runs in spike 010.
 - `spikes/_pty/`: the test harness the spikes used. `pty.cjs` runs a real interactive `claude` inside a pseudo-terminal, saves what the screen shows to `screen.txt` / `screen.log`, and "presses keys" listed in `cmd.txt`. `launch.sh` starts it and accepts the folder-trust prompt. Its sessions work in `C:\Users\denni\relay-sandbox\`, outside the repo, so Relay's own `CLAUDE.md` doesn't load into them.

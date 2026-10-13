@@ -4,6 +4,7 @@ This folder turns the Relay repo into study material. Start here.
 
 | Where | What you'll find | When it's written |
 |---|---|---|
+| [stage-1-retrospective.md](stage-1-retrospective.md) | Stage 1 in one page: what was built, the key decisions, bugs and lessons, and **what to study first** | At the end of each stage |
 | [REPO_TOUR.md](REPO_TOUR.md) | A guided walk through every folder and key file | Updated whenever the structure changes |
 | [journal/](journal/) | One entry per work session: what was built, why, a code walkthrough, new concepts, self-check questions | After every session |
 | [bugs/](bugs/) | Every bug: symptom, investigation, root cause, fix, lesson | Whenever a bug is fixed |

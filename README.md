@@ -4,7 +4,7 @@
 
 **Relay passes messages between two Claude Code sessions, a _lead_ and a _builder_, so a developer no longer has to copy and paste between them.**
 
-> **Status:** early development. Stage 1: M0 (repo foundation), M1 (spikes on how Claude Code delivers messages), M2 (the core library), M3 (the hooks) and M4 (the `relay` CLI) are done. `relay init` sets up any project, and a lead and builder then pass messages with no copy-paste ([proof](docs/spikes/011-m4-real-run.md)). See [Project status](#project-status).
+> **Status:** Stage 1 is done (v0.1.0). `relay init` sets up any project, and a lead and builder then pass work back and forth with no copy-paste: 7 rounds unattended in the final test ([proof](docs/spikes/012-m5-end-to-end.md)). Phone alerts (Stage 2) are next. See [Project status](#project-status).
 
 ## The problem
 
@@ -115,15 +115,41 @@ Your own `CLAUDE.md`, `.claude/settings.json` and `.gitignore` are never changed
 2. Open Claude Code in `my-app-lead` (the lead) and give it a goal.
 3. Watch, or walk away. The lead replies `TO DENNIS:` when it's done or needs you.
 
-**Commands** (run them in the project or lead folder, or pass the folder):
+## Using Relay day to day
+
+Run these in the project folder or the lead folder, or pass the folder (`relay status C:\path\to\my-app`).
+
+**Start a run.** Open both sessions, type `/relay-start` in the builder, and give the lead a goal. After a `relay stop`, run `relay start` first. It clears the stop and resets the round count.
+
+**Check on it.**
+
+```powershell
+relay status        # who has the baton, rounds, whether each session is waiting, busy or stuck
+relay log           # what was passed, one line per message
+relay log --full    # whole messages
+relay log --limit 10
+```
+
+If `relay status` says a waiter is **dead** (for example after you closed a session), it prints a warning and how to fix it. In the builder, `/relay-start` always works.
+
+**Pause or stop.**
 
 | Command | What it does |
 |---|---|
-| `relay status` | Who has the baton, the round count, whether each session's waiter is alive, busy or idle, paused or stopped. |
-| `relay log` | The activity log in readable lines (`--full` for whole messages, `--limit 10` for the last 10). |
-| `relay pause` / `relay resume` | Hold messages, then deliver them again. |
-| `relay stop` | End the run. Sessions stop waiting. |
+| `relay pause` | Hold messages. Both sessions finish what they're doing, and nothing new is delivered. |
+| `relay resume` | Deliver held messages and carry on. |
+| `relay stop` | End the run. Waiting sessions stop within a couple of seconds, and queued messages are dropped. |
 | `relay start` | Get ready for a new run after a stop. |
+
+A run also ends by itself when the lead replies `TO DENNIS:` (or with no tag), or after the round limit in `relay.config.json` (20 by default). If the lead writes something before its `TO CODE:` line, Relay asks it once to resend with the tag first (`nudge` in `relay log`).
+
+**Remove Relay from a project.**
+
+```powershell
+relay init --undo C:\path\to\my-app
+```
+
+This deletes the lead folder's Relay files and the builder's hooks, rules and skill, and restores any file Relay changed. Your own files and the builder's work stay as they are.
 
 ## Repository layout
 
@@ -147,7 +173,7 @@ A guided walk through every folder is in [docs/learning/REPO_TOUR.md](docs/learn
 
 | Stage | What it delivers | Status |
 |---|---|---|
-| 1. Engine on the PC | Hooks and the `relay` CLI; lead and builder run several rounds with no copy-paste | In progress: M0–M4 done ([real run](docs/spikes/011-m4-real-run.md)); M5, a longer end-to-end run, is next |
+| 1. Engine on the PC | Hooks and the `relay` CLI; lead and builder run several rounds with no copy-paste | **Done** (v0.1.0): 7 rounds unattended on a realistic project ([spike 012](docs/spikes/012-m5-end-to-end.md)); [retrospective](docs/learning/stage-1-retrospective.md) |
 | 2. Phone alerts | `TO DENNIS:` and "stuck" alerts reach the phone | Planned |
 | 3. Android app | Status, activity timeline, Pause/Stop from the phone | Planned |
 

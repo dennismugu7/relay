@@ -52,3 +52,5 @@ One goal: `packages/core`, fully tested. Pure library code and tests only: no ho
 - Fix what breaks, with bug journal entries.
 
 **Stage 1 is done** when M5 runs at least 5 rounds unattended and the README shows how to set it up.
+
+**M5 result:** done 2026-10-13. On `relay-playground`, the lead and builder ran 7 rounds unattended in under 10 minutes ([spike 012](../spikes/012-m5-end-to-end.md)). Before M5, Dennis added the one-time nudge ([ADR 0007](../adr/0007-nudge-for-a-late-tag.md)). **Stage 1 is done**, released as v0.1.0. Retrospective: [docs/learning/stage-1-retrospective.md](../learning/stage-1-retrospective.md).
