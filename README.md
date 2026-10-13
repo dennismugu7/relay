@@ -1,5 +1,7 @@
 # Relay
 
+[![CI](https://github.com/dennismugu7/relay/actions/workflows/ci.yml/badge.svg)](https://github.com/dennismugu7/relay/actions/workflows/ci.yml)
+
 **Relay passes messages between two Claude Code sessions, a _lead_ and a _builder_, so a developer no longer has to copy and paste between them.**
 
 > **Status:** early development. Stage 1, milestone M0 (repo foundation) is done. Relay does not relay anything yet. See [Project status](#project-status).
@@ -57,7 +59,7 @@ Under the hood, each session runs a Claude Code **Stop hook**: a small script Cl
 Requirements: **Node.js 22.12 or newer** and npm. Works on Windows 11 (PowerShell) and Linux.
 
 ```powershell
-git clone <repo-url> relay
+git clone https://github.com/dennismugu7/relay.git
 cd relay
 npm install
 npm run check   # format check, lint, typecheck and tests
