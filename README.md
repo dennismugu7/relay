@@ -100,7 +100,7 @@ A guided walk through every folder is in [docs/learning/REPO_TOUR.md](docs/learn
 
 | Stage | What it delivers | Status |
 |---|---|---|
-| 1. Engine on the PC | Hooks, Relay Helper, `relay` CLI; lead and builder run several rounds with no copy-paste | In progress: M0 and M1 done; delivery design proposed in [ADR 0002](docs/adr/0002-delivery-mechanism.md) |
+| 1. Engine on the PC | Hooks, Relay Helper, `relay` CLI; lead and builder run several rounds with no copy-paste | In progress: M0 and M1 done; delivery design accepted in [ADR 0002](docs/adr/0002-delivery-mechanism.md) |
 | 2. Phone alerts | `TO DENNIS:` and "stuck" alerts reach the phone | Planned |
 | 3. Android app | Status, activity timeline, Pause/Stop from the phone | Planned |
 

@@ -1,6 +1,6 @@
 # 0002 — Delivery mechanism: an `asyncRewake` Stop hook with one waiter per session
 
-**Date:** 2026-10-13 · **Status:** proposed (waiting for Dennis's OK before M2)
+**Date:** 2026-10-13 · **Status:** accepted 2026-10-13 by Dennis, with one amendment (see "Re-arm replies don't end the run")
 
 ## Context
 Relay's core move: when one session (lead or builder) finishes a reply, its text must arrive in the other session as that session's next instruction. This happens with nobody typing, round after round, and every handoff is logged. The waiting session might wait minutes or over an hour while the other one works. Dennis must still be able to type into either session, from the PC or from his phone, without breaking anything.
@@ -39,6 +39,7 @@ The M1 spikes tested every candidate on Claude Code 2.1.296, native Windows 11 (
 - **One waiter per session.** A waiter records its session, PID, start time and deadline. When a newer waiter starts for the same session, the older one sees it's no longer the current waiter and exits with code 0 without delivering.
 - **Deliver only to an idle session.** A `UserPromptSubmit` hook marks the session **busy** when Dennis types (from the PC or the phone). The Stop hook marks it **idle** again. A waiter only delivers while its session is idle. Otherwise the message stays queued and is delivered by the waiter that starts at the end of Dennis's turn. This closes a gap spike 005 didn't cover: when Dennis types into an idle session, the newest waiter is still the one from the turn before.
 - **Re-arm before the timeout.** Shortly before its deadline (about 3500 s), a waiter with no message exits 2 with `Relay: no message yet. Reply with only: WAITING`. That costs one small turn per hour of waiting, and the next Stop starts a fresh waiter. This needs a quick check at the start of M3, because spike 005 only tested re-arming in the blocking style (004b).
+- **Re-arm replies don't end the run.** *(Amendment from Dennis's review.)* The re-arm turn's reply (`WAITING`) has no tag, so the normal rule would treat it as `TO DENNIS:`. The run would end, and Dennis would be notified every hour. To prevent this, the waiter sets a **re-arm marker** in the state file just before it sends the re-arm. The next Stop hook checks the marker, **not the reply text**. If the marker is set, the hook clears it and re-arms again. It doesn't log a handoff, count a round, or notify Dennis. Checking the marker rather than the text means a real reply that happens to say `WAITING` is still handled normally. M3's tests must cover this.
 - **Dead-waiter detection.** A waiter can still die without warning, for example when its terminal is closed (005). `relay status` checks the recorded PID and deadline. If the waiter is gone, the undelivered message stays queued and status tells Dennis what happened and how to resume (type anything into that session; its next Stop starts a new waiter and delivers).
 - **Our own loop guard and round counter** in the state file. `stop_hook_active` stays `true` after the first rewake and can't count anything (002, 005).
 

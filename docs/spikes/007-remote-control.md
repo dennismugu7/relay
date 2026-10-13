@@ -66,11 +66,11 @@ PC screen:
 ### 4. A phone prompt looks the same as a typed one
 In both transcripts the phone prompt is an ordinary user entry with `"origin":{"kind":"human"}`, exactly like a prompt typed on the PC. The rewake message arrived as `"origin":{"kind":"task-notification"}` carrying `Stop hook blocking error from command "Stop": TO CODE: ...`, as in spike 005. The hook input has no field that says "this came from the phone", so Relay doesn't need to treat phone turns differently (and can't tell them apart anyway).
 
-### Not checked: what the phone displayed
-I can only see the PC side. Dennis didn't report what the app showed during the 60 s wait, or whether the replies `DONE-RC-BLOCKING` and `DONE-RC-REWAKE` appeared on the phone. That's a display question, not a delivery question: both turns ran in the local session, which is the one Remote Control mirrors.
+### Not observed: what the phone displayed
+Dennis sent the prompts from his phone but didn't check what the app showed, either during the 60 s wait or afterwards. How the waiting hook and the replies `DONE-RC-BLOCKING` / `DONE-RC-REWAKE` look in the app is therefore **not observed**. That's a display question, not a delivery question: both turns ran in the local session, which is the one Remote Control mirrors. **Closed:** no further phone tests are planned.
 
 ## Conclusion
 - **Remote Control doesn't change anything for Relay's hooks.** The phone only supplies the prompt. The session, its Stop hooks and the files all run on the PC, so both the blocking baton and `asyncRewake` work unchanged.
 - **Dennis can start a Relay run from his phone** by sending the first message to the lead session. Every handoff after that is done by hooks on the PC.
 - Relay needs no phone-specific code. A later stage might use Remote Control (or push notifications) to tell Dennis when a `TO DENNIS:` message is waiting, but that's outside Stage 1.
-- Open: how the waiting hook and the replies look in the app. Worth a quick look the next time Dennis uses it; it doesn't affect the delivery design.
+- The phone display wasn't observed. Closed, because it doesn't affect the delivery design.
