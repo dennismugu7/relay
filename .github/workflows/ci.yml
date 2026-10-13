@@ -20,8 +20,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
-        # 20 is the oldest supported version; 24 is what the PC runs.
-        node: [20, 24]
+        # 22 is the oldest supported version; 24 is what the PC runs.
+        node: [22, 24]
     steps:
       - uses: actions/checkout@v5
 

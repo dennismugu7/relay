@@ -29,7 +29,7 @@ A suggested reading order for someone new: `README.md` → `docs/PROJECT_BRIEF.m
 
 | Path | What it is |
 |---|---|
-| `ci.yml` | GitHub Actions CI. On every push and pull request, runs format check, lint, typecheck and tests on Windows and Ubuntu, Node 20 and 24. |
+| `ci.yml` | GitHub Actions CI. On every push and pull request, runs format check, lint, typecheck and tests on Windows and Ubuntu, Node 22 and 24. |
 
 ## `packages/` — the code
 

@@ -38,7 +38,9 @@ Version notes from setting this up on 2026-10-12:
 - **Vitest is pinned to 4.1.x.** Vitest 5 needs Node 22.12+, and `CLAUDE.md` says Node 20+. Vitest 4.1 supports Node 20.
 - **Minimum Node is 20.19.0**, because ESLint 10 needs it. CI tests on Node 20 and 24.
 
+**Update 2026-10-13:** Dennis raised the minimum to Node 22, because Node 20 is past end of life. `engines` is now `>=22.12.0` (the exact minimum Vitest 5 needs), Vitest is unpinned to 5.x, and CI tests on Node 22 and 24. TypeScript stays pinned to 6.0.x.
+
 ## Consequences
 - Easier: sharing types between packages; catching message-shape bugs at compile time; one command (`npm run check`) for all quality checks; CI on Windows and Linux is straightforward.
 - Harder: a build step before the hook script can run (`npm run build`), and some config files to understand (see the 2026-10-12 journal entry).
-- Watch: how Claude Code will run the hook script (a built `dist/` file? a linked `relay` command?). That is decided in M3/M4. Also watch Node 20 being past its end of life (April 2026): moving the minimum to Node 22 would let us upgrade Vitest.
+- Watch: how Claude Code will run the hook script (a built `dist/` file? a linked `relay` command?). That is decided in M3/M4. Also watch Node 20 being past its end of life (April 2026): moving the minimum to Node 22 would let us upgrade Vitest (done 2026-10-13, see the update above).

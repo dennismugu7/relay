@@ -54,7 +54,7 @@ Under the hood, each session runs a Claude Code **Stop hook**: a small script Cl
 
 ## Getting started (development)
 
-Requirements: **Node.js 20.19 or newer** and npm. Works on Windows 11 (PowerShell) and Linux.
+Requirements: **Node.js 22.12 or newer** and npm. Works on Windows 11 (PowerShell) and Linux.
 
 ```powershell
 git clone <repo-url> relay

@@ -32,7 +32,7 @@ Drift is the enemy. Work on one thing, make it work, then move on.
 
 ## Tech stack (Stage 1)
 
-- Node.js 20+ and TypeScript, strict mode.
+- Node.js 22+ and TypeScript, strict mode.
 - npm workspaces monorepo:
   - `packages/core` — shared types, message tag parsing (`TO CODE:` / `TO DENNIS:`), state file helpers.
   - `packages/hooks` — the Stop hook script each session runs.
