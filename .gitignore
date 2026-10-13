@@ -27,5 +27,7 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 
-# Spike experiments: only their write-ups in docs/spikes/ are kept
-spikes/
+# Spike experiments: only their write-ups in docs/spikes/ are kept.
+# The leading slash anchors this to the repo root; without it, docs/spikes/
+# would be ignored too (see docs/learning/bugs/001).
+/spikes/

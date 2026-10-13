@@ -20,8 +20,9 @@ A suggested reading order for someone new: `README.md` → `docs/PROJECT_BRIEF.m
 | `tsconfig.base.json` | Shared TypeScript settings (strict mode, Node ES modules). Every package extends it. |
 | `eslint.config.js` | Linter rules (ESLint + typescript-eslint, type-aware). |
 | `.prettierrc.json`, `.prettierignore` | Formatter settings, and what the formatter skips (Markdown, generated files). |
-| `vitest.config.ts` | Test runner config: finds `*.test.ts` in every package. |
-| `.gitignore` | Files Git must never track: `node_modules/`, `dist/`, `.env`, `spikes/`, … |
+| `vitest.config.ts` | Test runner config: finds `*.test.ts` in every package and in `test/`. |
+| `test/` | Repo-wide tests that belong to no package, such as checking `.gitignore` rules (`test/gitignore.test.ts`). Has its own `tsconfig.json`. |
+| `.gitignore` | Files Git must never track: `node_modules/`, `dist/`, `.env`, the root `/spikes/` folder, … |
 | `.gitattributes` | Forces LF line endings so checks behave the same on Windows and Linux. |
 | `.env.example` | Template for environment variables. Relay needs none yet. Never commit a real `.env`. |
 
@@ -72,7 +73,7 @@ packages/<name>/
 | `REPO_TOUR.md` | This file. |
 | `GLOSSARY.md` | Every technical term, in plain words. |
 | `journal/` | One entry per work session, named by date. First entry: `2026-10-12-repo-foundation.md`. |
-| `bugs/` | One entry per bug fixed. Empty so far. |
+| `bugs/` | One entry per bug fixed. First: `001-gitignore-hid-spike-docs.md`. |
 | `templates/` | Blank forms for journal and bug entries. |
 
 ## Folders you'll see that are not in Git

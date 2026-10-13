@@ -1,9 +1,9 @@
 import { defineConfig } from 'vitest/config';
 
-// One Vitest run covers every package. Test files sit next to the code
-// they test and end in .test.ts.
+// One Vitest run covers every package. Package tests sit next to the code
+// they test; repo-wide tests (such as .gitignore rules) live in test/.
 export default defineConfig({
   test: {
-    include: ['packages/*/src/**/*.test.ts'],
+    include: ['packages/*/src/**/*.test.ts', 'test/**/*.test.ts'],
   },
 });
