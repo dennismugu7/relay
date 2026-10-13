@@ -16,6 +16,7 @@ const config: RelayConfig = {
   leadPath: '/work/app1-lead',
   maxRounds: 3,
   delivery: 'rewake',
+  timeoutSeconds: 3600,
 };
 const now = new Date('2026-10-13T10:00:00.000Z');
 const later = new Date('2026-10-13T10:30:00.000Z');

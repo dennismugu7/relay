@@ -27,10 +27,15 @@ export interface RelayConfig {
   /** Rounds allowed before Relay stops and hands control to Dennis. */
   maxRounds: number;
   delivery: DeliveryMode;
+  /**
+   * The hook timeout in seconds. `relay init` writes it into both sessions'
+   * settings; a waiter re-arms shortly before it runs out (ADR 0002).
+   */
+  timeoutSeconds: number;
 }
 
 /** Used when the config file leaves a setting out. */
-export const DEFAULTS = { maxRounds: 20, delivery: 'rewake' } as const;
+export const DEFAULTS = { maxRounds: 20, delivery: 'rewake', timeoutSeconds: 3600 } as const;
 
 const DELIVERY_MODES: readonly string[] = ['rewake', 'blocking'];
 
@@ -85,6 +90,14 @@ export function parseConfig(value: unknown): RelayConfig {
   if (typeof delivery !== 'string' || !DELIVERY_MODES.includes(delivery)) {
     problems.push('"delivery" must be "rewake" or "blocking".');
   }
+  const timeoutSeconds = raw.timeoutSeconds ?? DEFAULTS.timeoutSeconds;
+  if (
+    typeof timeoutSeconds !== 'number' ||
+    !Number.isInteger(timeoutSeconds) ||
+    timeoutSeconds < 60
+  ) {
+    problems.push('"timeoutSeconds" must be a whole number of at least 60.');
+  }
 
   if (problems.length > 0) {
     throw new ConfigError(`Invalid config:\n- ${problems.join('\n- ')}`);
@@ -95,6 +108,7 @@ export function parseConfig(value: unknown): RelayConfig {
     leadPath: leadPath as string,
     maxRounds: maxRounds as number,
     delivery: delivery as DeliveryMode,
+    timeoutSeconds: timeoutSeconds as number,
   };
 }
 

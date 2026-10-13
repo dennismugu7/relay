@@ -16,6 +16,7 @@ import type { Role } from './state.js';
 export type ActivityKind =
   | 'handoff' // a message was passed from one session to the other (queued for delivery)
   | 'to-dennis' // control returned to Dennis
+  | 'started' // `relay start`: ready for a new run
   | 'paused'
   | 'resumed'
   | 'stopped'

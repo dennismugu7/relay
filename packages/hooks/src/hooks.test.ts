@@ -26,6 +26,7 @@ async function writeConfig(overrides: Partial<RelayConfig> = {}) {
     leadPath: path.join(home, 'app1-lead'),
     maxRounds: 5,
     delivery: 'rewake',
+    timeoutSeconds: 3600,
     ...overrides,
   };
   await writeFile(configPath, JSON.stringify(config));

@@ -9,7 +9,14 @@ import { ConfigError, isValidProjectName, loadConfig, parseConfig } from './conf
 // Absolute paths that are valid on the machine running the tests (Windows or Linux).
 const builderPath = path.join(os.tmpdir(), 'app1');
 const leadPath = path.join(os.tmpdir(), 'app1-lead');
-const valid = { name: 'app1', builderPath, leadPath, maxRounds: 5, delivery: 'blocking' };
+const valid = {
+  name: 'app1',
+  builderPath,
+  leadPath,
+  maxRounds: 5,
+  delivery: 'blocking',
+  timeoutSeconds: 600,
+};
 
 describe('parseConfig', () => {
   it('accepts a complete config', () => {
@@ -23,6 +30,7 @@ describe('parseConfig', () => {
       leadPath,
       maxRounds: 20,
       delivery: 'rewake',
+      timeoutSeconds: 3600,
     });
   });
 
@@ -40,6 +48,7 @@ describe('parseConfig', () => {
     ['zero max rounds', { ...valid, maxRounds: 0 }, '"maxRounds"'],
     ['fractional max rounds', { ...valid, maxRounds: 2.5 }, '"maxRounds"'],
     ['max rounds as text', { ...valid, maxRounds: '5' }, '"maxRounds"'],
+    ['a short timeout', { ...valid, timeoutSeconds: 30 }, '"timeoutSeconds"'],
     ['an unknown delivery mode', { ...valid, delivery: 'pipe' }, '"delivery"'],
   ])('rejects %s', (_name, value, expected) => {
     expect(() => parseConfig(value)).toThrow(ConfigError);
