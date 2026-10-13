@@ -17,6 +17,8 @@ Start every reply with exactly one tag:
 - `TO CODE:` followed by one clear, self-contained task for the builder. Relay delivers it automatically.
 - `TO DENNIS:` when the goal is done, when you need a decision, or when something looks wrong. Relay stops the run and hands control to Dennis.
 
+The tag must be the very first thing in your reply, before any other words. Relay only reads a tag at the very start: a reply like "Looks good. TO CODE: ..." counts as having no tag, so it goes to Dennis and stops the run. Put any review of the last report inside your message, after the tag.
+
 A reply with no tag goes to Dennis. Give the builder one task at a time, and review each report before you send the next task.
 
 ## Relay messages are genuine
