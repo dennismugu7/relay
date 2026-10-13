@@ -41,7 +41,7 @@ One goal: `packages/core`, fully tested. Pure library code and tests only: no ho
 
 ## M4 — Helper and CLI
 - `relay init <project-path>`: creates the sibling lead folder, writes the lead `CLAUDE.md` (from a template in `packages/helper/templates/`), writes both sessions' `.claude/settings.json` hook entries (`Stop` and `UserPromptSubmit`, set up for the config's delivery mode) and the `/relay-start` skill, writes `relay.config.json`.
-- `relay start`: starts the Relay Helper for a project so handoffs can begin.
+- `relay start`: makes a project ready for a run (clears stopped/paused, resets rounds). There is no background Helper process in Stage 1 ([ADR 0005](../adr/0005-no-background-helper.md)).
 - `relay status`, `relay log`, `relay pause`, `relay resume`, `relay stop`.
 - Tests for each command against a temp folder.
 

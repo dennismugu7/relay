@@ -4,7 +4,7 @@
 
 **Relay passes messages between two Claude Code sessions, a _lead_ and a _builder_, so a developer no longer has to copy and paste between them.**
 
-> **Status:** early development. Stage 1: M0 (repo foundation), M1 (spikes on how Claude Code delivers messages), M2 (the core library) and M3 (the hooks) are done. The hooks already pass messages between two real sessions when set up by hand; the `relay` CLI that sets them up comes next. See [Project status](#project-status).
+> **Status:** early development. Stage 1: M0 (repo foundation), M1 (spikes on how Claude Code delivers messages), M2 (the core library), M3 (the hooks) and M4 (the `relay` CLI) are done. `relay init` sets up any project, and a lead and builder then pass messages with no copy-paste ([proof](docs/spikes/011-m4-real-run.md)). See [Project status](#project-status).
 
 ## The problem
 
@@ -45,7 +45,7 @@ sequenceDiagram
     R->>D: Notification
 ```
 
-Under the hood, each session runs a Claude Code **Stop hook**: a small script Claude Code runs every time Claude finishes a reply. The hook hands the reply to the Relay Helper and waits for the answer from the other side. Only one session works at a time; the other waits without using any usage. Whether this approach works in practice is being tested first (milestone M1).
+Under the hood, each session runs a Claude Code **Stop hook**: a small script Claude Code runs every time Claude finishes a reply. The hook reads the reply's tag, queues the message in a small state file, and then waits in the background. When a message arrives for its session, it wakes the session with it. A second hook marks a session busy while you type, so Relay never interrupts you. Only one session works at a time; the waiting one is idle and uses no usage. There is no background service to run ([ADR 0002](docs/adr/0002-delivery-mechanism.md), [ADR 0005](docs/adr/0005-no-background-helper.md)).
 
 ### Safety rules
 
@@ -76,7 +76,54 @@ Useful scripts:
 | `npm run format` | Formats code (Prettier). |
 | `npm run check` | All of the above checks, the same as CI. |
 
-The `relay` CLI (`relay init`, `start`, `status`, `log`, `pause`, `resume`, `stop`) arrives in milestone M4.
+## Set up Relay on your project
+
+**1. Install the `relay` command** (once). From the Relay repo:
+
+```powershell
+npm install
+npm run build
+cd packages/helper
+npm link        # puts "relay" on your PATH; works in PowerShell and Git Bash
+relay help
+```
+
+After pulling new Relay code, run `npm run build` again. The linked command uses the repo directly. To uninstall, run `npm unlink -g @relay/helper`.
+
+**2. Set up a project:**
+
+```powershell
+relay init C:\path\to\my-app
+```
+
+This creates the lead's folder **next to** your project (`my-app-lead`) and adds a few files to your project:
+
+| Where | What |
+|---|---|
+| `my-app-lead\CLAUDE.md` | The lead's instructions: plan and review, never write code, tag every reply. |
+| `my-app-lead\relay.config.json` | Settings: max rounds (20), delivery mode, hook timeout. Edit it, then run `relay init` again. |
+| `my-app-lead\.claude\settings.json` | The lead's hooks, plus read access to your project. |
+| `my-app\.claude\rules\relay-builder.md` | The builder's Relay instructions. |
+| `my-app\.claude\skills\relay-start\` | The `/relay-start` command. |
+| `my-app\.claude\settings.local.json` | The builder's hooks, merged into the file if you already have one. |
+
+Your own `CLAUDE.md`, `.claude/settings.json` and `.gitignore` are never changed. In a git repo, Relay hides its new files with `.git/info/exclude` (local only), so `git status` stays clean. Running `relay init` again changes nothing, and `relay init --undo C:\path\to\my-app` removes everything it added, restoring changed files exactly ([ADR 0006](docs/adr/0006-init-layout-and-undo.md)).
+
+**3. Run it:**
+
+1. Open Claude Code in `my-app` (the builder) and type `/relay-start`.
+2. Open Claude Code in `my-app-lead` (the lead) and give it a goal.
+3. Watch, or walk away. The lead replies `TO DENNIS:` when it's done or needs you.
+
+**Commands** (run them in the project or lead folder, or pass the folder):
+
+| Command | What it does |
+|---|---|
+| `relay status` | Who has the baton, the round count, whether each session's waiter is alive, busy or idle, paused or stopped. |
+| `relay log` | The activity log in readable lines (`--full` for whole messages, `--limit 10` for the last 10). |
+| `relay pause` / `relay resume` | Hold messages, then deliver them again. |
+| `relay stop` | End the run. Sessions stop waiting. |
+| `relay start` | Get ready for a new run after a stop. |
 
 ## Repository layout
 
@@ -84,7 +131,7 @@ The `relay` CLI (`relay init`, `start`, `status`, `log`, `pause`, `resume`, `sto
 packages/
   core/     tag parsing, project config, shared state and activity log
   hooks/    the Stop and UserPromptSubmit hooks each session runs
-  helper/   the Relay Helper background process and the relay CLI
+  helper/   the relay CLI and the templates relay init writes
 docs/       brief, plans, decisions (ADRs), spikes and the learning journal
 ```
 
@@ -100,7 +147,7 @@ A guided walk through every folder is in [docs/learning/REPO_TOUR.md](docs/learn
 
 | Stage | What it delivers | Status |
 |---|---|---|
-| 1. Engine on the PC | Hooks, Relay Helper, `relay` CLI; lead and builder run several rounds with no copy-paste | In progress: M0–M3 done; delivery design in [ADR 0002](docs/adr/0002-delivery-mechanism.md), first real run in [spike 010](docs/spikes/010-m3-real-run.md) |
+| 1. Engine on the PC | Hooks and the `relay` CLI; lead and builder run several rounds with no copy-paste | In progress: M0–M4 done ([real run](docs/spikes/011-m4-real-run.md)); M5, a longer end-to-end run, is next |
 | 2. Phone alerts | `TO DENNIS:` and "stuck" alerts reach the phone | Planned |
 | 3. Android app | Status, activity timeline, Pause/Stop from the phone | Planned |
 

@@ -20,6 +20,8 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **CI (Continuous Integration)** — A server that automatically runs checks (lint, typecheck, tests) on every push. Relay uses GitHub Actions.
 
+**`.claude/rules/`** — A folder of Markdown files that Claude Code loads into every session, like extra CLAUDE.md files. `relay init` puts the builder's instructions there, so your own CLAUDE.md is never edited.
+
 **`claudeMdExcludes`** — A Claude Code setting listing CLAUDE.md files a session should not load. Used in the M3 test folders so Relay's own instructions stay out.
 
 **CLI (Command-Line Interface)** — A program you control by typing commands in a terminal, such as `relay status`.
@@ -56,6 +58,8 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **Formatter** — A tool that rewrites code layout (spacing, quotes, line breaks) without changing what it does. This repo uses Prettier.
 
+**`.git/info/exclude`** — Git's local-only ignore list. It works like `.gitignore` but is never committed, so Relay can hide its files without changing your repo.
+
 **GitHub Actions** — GitHub's built-in CI service. Workflows live in `.github/workflows/`.
 
 **Harness (test harness)** — Helper code that runs the thing under test and controls or watches it. Relay's spikes used `spikes/_pty/pty.cjs` to drive real Claude Code sessions.
@@ -64,7 +68,11 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **Hook (Claude Code)** — A script Claude Code runs automatically at certain moments, such as when Claude finishes a reply (the Stop hook). Relay is built on hooks.
 
+**Idempotent** — Doing it twice has the same effect as doing it once. A second `relay init` changes nothing.
+
 **Idle (session)** — A Claude Code session that has finished its reply and is waiting at the prompt with nothing running.
+
+**Install manifest** — `~/.relay/<project>/install.json`: Relay's record of every file `relay init` touched and what it held before, used by `relay init --undo`.
 
 **JSON Lines (`.jsonl`)** — A text file with one complete JSON object per line. Easy to append to. Relay's activity log uses it.
 
@@ -90,11 +98,15 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **`npm ci`** — Installs exactly what `package-lock.json` lists, from scratch. Used in CI.
 
+**`npm link`** — Makes a package from your own folder available as a global command, through a link rather than a copy, so rebuilding updates it.
+
 **npm workspaces** — npm's built-in monorepo support: several packages in one repo, linked together by one `npm install`.
 
 **`npx`** — Runs a command from an npm package. Use `npx --no-install <tool>` so it never downloads an unexpected package.
 
 **owesReply** — A flag in Relay's state: set when a message is delivered to the builder, so its next reply goes back to the lead as the report.
+
+**PATH** — The list of folders your terminal searches for commands. `npm link` puts `relay` in one of them.
 
 **Path traversal** — Using `..` or slashes in text that becomes a file path, to reach files outside the intended folder. Relay blocks it by allowing only safe characters in project names.
 
@@ -124,6 +136,12 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **Session (Claude Code)** — One running Claude Code conversation in a terminal.
 
+**`settings.local.json`** — `.claude/settings.local.json`: Claude Code settings for you only, in one project, meant to stay out of git. Relay puts the builder's hooks there.
+
+**Shebang** — The first line `#!/usr/bin/env node` of a script, saying which program runs it. npm uses it to create the `relay` command.
+
+**Skill (Claude Code)** — A `SKILL.md` file in `.claude/skills/<name>/` that adds a slash command, such as `/relay-start`.
+
 **Spike** — A small, throwaway experiment that answers one "will this work?" question before real code depends on it. Written up in `docs/spikes/`.
 
 **Stale lock** — A lock file left behind by a process that crashed while holding it. Relay treats a lock older than 10 seconds as stale and removes it.
@@ -137,6 +155,8 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 **Strict mode (TypeScript)** — A group of compiler checks (`"strict": true`) that catch more mistakes, especially values that might be `null` or `undefined`.
 
 **System reminder** — Text Claude Code adds to the conversation for Claude to read, as opposed to text typed by the user. An `asyncRewake` hook's message reaches Claude this way.
+
+**Template** — A file with blanks such as `{{builderPath}}` that a program fills in. `relay init` fills its templates to write each project's instructions.
 
 **Timeout (hook)** — How many seconds Claude Code lets a hook run before killing it, set per hook with `timeout`. A killed hook's output is thrown away (spike 004).
 

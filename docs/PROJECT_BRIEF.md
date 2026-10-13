@@ -43,7 +43,7 @@ Only one session works at a time. The waiting one is paused, not spending usage.
 
 ### Pieces
 - **Hooks** (`packages/hooks`) — the Stop hook script.
-- **Relay Helper** (`packages/helper`) — background process on the PC: holds the baton per project, keeps an append-only activity log, enforces Pause, Stop, a max-rounds limit, and later sends phone notifications.
+- **Relay Helper** (`packages/helper`) — originally planned as a background process. **Update 2026-10-13:** the hooks do this work themselves, so in Stage 1 `packages/helper` is just the `relay` CLI and its templates ([ADR 0005](adr/0005-no-background-helper.md)).
 - **Relay app** (Stage 3) — Android app (Expo) showing status, an activity timeline, a persistent "what's running" notification, alerts, and Pause/Stop. No chat, no typing instructions.
 
 ## Stages
