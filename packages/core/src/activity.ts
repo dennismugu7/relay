@@ -21,6 +21,7 @@ export type ActivityKind =
   | 'resumed'
   | 'stopped'
   | 'max-rounds' // the round limit was reached
+  | 'nudge' // the lead was asked to resend a reply with its tag first
   | 'error'; // a hook failed; `message` says why
 
 export interface ActivityEntry {

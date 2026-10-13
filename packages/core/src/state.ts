@@ -48,6 +48,12 @@ export interface SessionState {
    * chat Dennis has with the builder directly is not forwarded as a report.
    */
   owesReply: boolean;
+  /**
+   * The nudge marker (lead only): true after Relay asked the lead to resend a
+   * reply with its tag first. The next reply is never nudged again, so a
+   * wrong resend goes to Dennis as normal. Older state files may lack it.
+   */
+  nudgePending?: boolean;
 }
 
 /** A message waiting to be delivered. */

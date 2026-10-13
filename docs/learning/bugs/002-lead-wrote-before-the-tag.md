@@ -38,8 +38,11 @@ In the rerun, the lead put its review after the tag every time (`TO CODE: Review
 
 I didn't change the parser. Accepting a tag anywhere in the reply would change the protocol Dennis accepted in M2, and would risk acting on a `TO CODE:` that's only quoted in a review. That's a decision for Dennis, noted in `docs/BACKLOG.md`.
 
+**Follow-up (after M4):** Dennis decided to keep the parser strict and add a one-time nudge: if an untagged lead reply has a line starting with `TO CODE:` (outside quotes and code blocks), Relay asks the lead to resend it with the tag first. See [ADR 0007](../../adr/0007-nudge-for-a-late-tag.md).
+
 ## How it's guarded now
 - `packages/helper/src/init.test.ts` checks that the lead's `CLAUDE.md` contains "The tag must be the very first thing in your reply".
+- Since ADR 0007, `hasBuriedCodeTag` tests (`packages/core/src/tags.test.ts`) and the nudge tests in `packages/hooks/src/decide.test.ts` and `hooks.test.ts` cover the safety net: one nudge, then Dennis.
 - The real behaviour is model-dependent, so it can't be fully unit-tested. Spike 011's rerun is the evidence, and every future real run (M5) re-checks it.
 
 ## Lesson

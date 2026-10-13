@@ -54,6 +54,7 @@ export async function runStop(options: StopOptions, deps: HookDeps): Promise<Hoo
     });
   });
   for (const entry of decision.log) await appendActivity(dir, entry);
+  if (decision.wake) return deliveryOutput(config.delivery, decision.wake);
   if (!decision.wait) return ALLOW_STOP;
 
   // 2. Wait.

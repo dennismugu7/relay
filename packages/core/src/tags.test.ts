@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseTag } from './tags.js';
+import { hasBuriedCodeTag, parseTag } from './tags.js';
 
 describe('parseTag', () => {
   describe('TO CODE:', () => {
@@ -87,5 +87,34 @@ describe('parseTag', () => {
       expect(parsed.tagged).toBe(false);
       expect(parsed.body).toBe(reply.trim());
     });
+  });
+});
+
+describe('hasBuriedCodeTag', () => {
+  it.each([
+    ['review text, then the tag (bug 002)', 'Task 1 checks out.\n\nTO CODE: now add a test'],
+    ['a bold tag', 'Looks good.\n**TO CODE:** next step'],
+    ['a heading tag', 'Looks good.\n## TO CODE: next step'],
+    ['mixed case', 'Looks good.\nTo Code: next step'],
+    ['Windows line endings', 'Looks good.\r\nTO CODE: next step'],
+    ['a tag after a closed code block', 'Like this:\n```\nx = 1\n```\nTO CODE: do it'],
+  ])('finds %s', (_name, reply) => {
+    expect(hasBuriedCodeTag(reply)).toBe(true);
+  });
+
+  it.each([
+    ['a plain untagged reply', 'All done, nothing more to do.'],
+    ['a quoted tag', 'The builder wrote:\n> TO CODE: do it'],
+    ['a tag inside a ``` code block', 'Example:\n```\nTO CODE: do it\n```'],
+    ['a tag inside a ~~~ code block', 'Example:\n~~~\nTO CODE: do it\n~~~'],
+    ['a tag in an unclosed code block', 'Example:\n```\nTO CODE: do it'],
+    ['an indented code line', 'Example:\n\n    TO CODE: do it'],
+    ['an inline code tag', 'Start replies with `TO CODE:` please.\n`TO CODE:` like that.'],
+    ['a tag mid-sentence', 'I will say TO CODE: later'],
+    ['a list item', 'Steps:\n- TO CODE: do it'],
+    ['a longer word', 'Hmm.\nTO CODEX: do it'],
+    ['TO DENNIS: further down', 'Done.\nTO DENNIS: all good'],
+  ])('ignores %s', (_name, reply) => {
+    expect(hasBuriedCodeTag(reply)).toBe(false);
   });
 });

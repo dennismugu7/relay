@@ -94,6 +94,8 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **Node.js** — A program that runs JavaScript outside the browser. Claude Code and Relay both run on it.
 
+**Nudge** — Relay's one-time reminder to the lead when its reply had a `TO CODE:` line but not at the very start: "Resend it with the tag as the very first thing." It isn't a round or a handoff, and it shows as `nudge` in `relay log` ([ADR 0007](../adr/0007-nudge-for-a-late-tag.md)).
+
 **npm** — Node's package manager: it installs libraries and runs project scripts (`npm run ...`).
 
 **`npm ci`** — Installs exactly what `package-lock.json` lists, from scratch. Used in CI.

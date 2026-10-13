@@ -9,6 +9,7 @@
 import {
   clearWaiter,
   enqueueMessage,
+  hasBuriedCodeTag,
   isCurrentWaiter,
   type NewActivityEntry,
   parseTag,
@@ -22,6 +23,13 @@ import {
 
 /** The re-arm request a waiter sends when no message came before its deadline. */
 export const REARM_MESSAGE = 'Relay: no message yet. Reply with only: WAITING';
+
+/**
+ * Sent to the lead, once, when its reply had no tag at the start but had a
+ * TO CODE: line further down (bug 002). Not a round and not a handoff.
+ */
+export const NUDGE_MESSAGE =
+  "Relay: your reply didn't start with a tag. Resend it with the tag as the very first thing.";
 
 export function otherRole(role: Role): Role {
   return role === 'lead' ? 'builder' : 'lead';
@@ -54,6 +62,8 @@ export interface StopContext {
 export interface StopDecision {
   /** True if this hook should now wait for the next message. */
   wait: boolean;
+  /** Wake this session straight away with this text, without waiting (the nudge). */
+  wake?: string;
   /** Activity log entries to append. */
   log: NewActivityEntry[];
 }
@@ -88,6 +98,18 @@ export function decideOnStop(state: RelayState, ctx: StopContext): StopDecision 
     me.rearmPending = false;
   } else if (role === 'lead') {
     const parsed = parseTag(reply);
+    // One nudge per reply: the reply after a nudge is never nudged again.
+    const alreadyNudged = me.nudgePending === true;
+    me.nudgePending = false;
+    if (!parsed.tagged && !alreadyNudged && hasBuriedCodeTag(reply)) {
+      // The lead wrote something before its TO CODE: line. Instead of ending
+      // the run, ask it to resend. The parser itself stays strict.
+      me.nudgePending = true;
+      me.busy = true;
+      me.waiter = null;
+      log.push({ time, project, kind: 'nudge', from: 'lead', to: 'lead', message: parsed.body });
+      return { wait: false, wake: NUDGE_MESSAGE, log };
+    }
     if (parsed.to === 'dennis') {
       state.rounds = 0;
       me.waiter = null;

@@ -5,6 +5,7 @@ import {
   decideOnStop,
   decideOnTick,
   formatDelivery,
+  NUDGE_MESSAGE,
   REARM_MESSAGE,
   rearmTime,
   type StopContext,
@@ -107,6 +108,84 @@ describe('decideOnStop — lead', () => {
     const d = decideOnStop(s, ctx({ reply: 'TO CODE: later' }));
     expect(d.wait).toBe(true);
     expect(s.queue).toHaveLength(1);
+  });
+});
+
+describe('decideOnStop — the nudge (tag not first)', () => {
+  const buried = 'Task 1 checks out.\n\nTO CODE: now add a test';
+
+  it('wakes the lead once with the nudge instead of ending the run', () => {
+    const s = initialState();
+    s.rounds = 2;
+    const d = decideOnStop(s, ctx({ reply: buried }));
+
+    expect(d).toEqual({
+      wait: false,
+      wake: NUDGE_MESSAGE,
+      log: [
+        {
+          time: now.toISOString(),
+          project: 'app1',
+          kind: 'nudge',
+          from: 'lead',
+          to: 'lead',
+          message: buried,
+        },
+      ],
+    });
+    // Not a round, not a handoff, nothing queued, and rounds are not reset.
+    expect(s.rounds).toBe(2);
+    expect(s.queue).toEqual([]);
+    expect(s.sessions.lead).toMatchObject({ nudgePending: true, busy: true, waiter: null });
+  });
+
+  it('a correct resend is handed off normally and clears the marker', () => {
+    const s = initialState();
+    decideOnStop(s, ctx({ reply: buried }));
+    const d = decideOnStop(s, ctx({ reply: 'TO CODE: now add a test' }));
+
+    expect(d.wait).toBe(true);
+    expect(d.log).toMatchObject([{ kind: 'handoff', message: 'now add a test' }]);
+    expect(s.rounds).toBe(1);
+    expect(s.sessions.lead.nudgePending).toBe(false);
+  });
+
+  it('only one nudge per reply: a wrong resend goes to Dennis as normal', () => {
+    const s = initialState();
+    decideOnStop(s, ctx({ reply: buried }));
+    const d = decideOnStop(s, ctx({ reply: buried }));
+
+    expect(d.wait).toBe(false);
+    expect(d.wake).toBeUndefined();
+    expect(d.log).toMatchObject([{ kind: 'to-dennis', message: buried }]);
+    expect(s.sessions.lead.nudgePending).toBe(false);
+  });
+
+  it('the next wrong reply after a good one can be nudged again', () => {
+    const s = initialState();
+    decideOnStop(s, ctx({ reply: buried }));
+    decideOnStop(s, ctx({ reply: 'TO CODE: now add a test' }));
+    const d = decideOnStop(s, ctx({ reply: buried }));
+    expect(d.wake).toBe(NUDGE_MESSAGE);
+  });
+
+  it.each([
+    ['a quoted TO CODE:', 'The builder said:\n> TO CODE: do it'],
+    ['a TO CODE: in a code block', 'Example:\n```\nTO CODE: do it\n```'],
+    ['a TO DENNIS: reply that mentions TO CODE: below', 'TO DENNIS: done.\nTO CODE: nothing'],
+  ])('does not nudge for %s', (_n, reply) => {
+    const s = initialState();
+    const d = decideOnStop(s, ctx({ reply }));
+    expect(d.wake).toBeUndefined();
+    expect(d.log).toMatchObject([{ kind: 'to-dennis' }]);
+  });
+
+  it('never nudges the builder', () => {
+    const s = initialState();
+    s.sessions.builder.owesReply = true;
+    const d = decideOnStop(s, ctx({ role: 'builder', reply: buried }));
+    expect(d.wake).toBeUndefined();
+    expect(d.log).toMatchObject([{ kind: 'handoff', from: 'builder' }]);
   });
 });
 

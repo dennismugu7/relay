@@ -51,3 +51,32 @@ export function parseTag(reply: string): ParsedReply {
   }
   return { to, tagged: true, body };
 }
+
+// A line that starts with `TO CODE:`, allowing a heading marker and bold or
+// italic markers ("**TO CODE:**"). Unlike TAG_PATTERN it allows no quote
+// marker and no backtick: a quoted or `code` TO CODE: is only being mentioned.
+const CODE_LINE_PATTERN = /^ {0,3}(?:#{1,6}\s+)?(?:[*_]+\s*)?to\s+code\s*[*_]*\s*:/i;
+// A line that opens or closes a fenced code block: ``` or ~~~.
+const FENCE_PATTERN = /^ {0,3}(```|~~~)/;
+
+/**
+ * True if an untagged reply has a line further down that starts with
+ * `TO CODE:`, meaning the lead most likely wrote something before its tag
+ * (bug 002). Lines inside fenced code blocks, quoted lines ("> ...") and
+ * indented code (4+ spaces) don't count.
+ *
+ * This never changes where a reply goes; `parseTag` stays strict. The Stop
+ * hook uses it to ask the lead, once, to resend with the tag first.
+ */
+export function hasBuriedCodeTag(reply: string): boolean {
+  let inFence = false;
+  for (const line of reply.split(/\r?\n/)) {
+    if (FENCE_PATTERN.test(line)) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence) continue;
+    if (CODE_LINE_PATTERN.test(line)) return true;
+  }
+  return false;
+}

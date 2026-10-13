@@ -57,7 +57,7 @@ Each file has a matching `*.test.ts` next to it. Read them in this order:
 
 | File | What it does |
 |---|---|
-| `tags.ts` | `parseTag(reply)`: decides whether a reply goes to the builder (`TO CODE:`) or to Dennis (`TO DENNIS:` or no tag). |
+| `tags.ts` | `parseTag(reply)`: decides whether a reply goes to the builder (`TO CODE:`) or to Dennis (`TO DENNIS:` or no tag). `hasBuriedCodeTag(reply)`: spots a `TO CODE:` line further down, for the nudge (ADR 0007). |
 | `config.ts` | Loads and checks `relay.config.json`: name, builder and lead folders, max rounds, delivery mode. |
 | `paths.ts` | Where Relay keeps files: `%USERPROFILE%\.relay\<project>\`. |
 | `lock.ts` | `withLock`: a lock file so only one process changes the state at a time. |
@@ -73,7 +73,7 @@ Claude Code runs the built scripts in `dist/bin/` (ADR 0004). Read the source in
 
 | File | What it does |
 |---|---|
-| `decide.ts` | The rules, as pure functions: what a finished reply means (`decideOnStop`) and what a waiting hook should do on each check (`decideOnTick`). Most tests are here. |
+| `decide.ts` | The rules, as pure functions: what a finished reply means (`decideOnStop`) and what a waiting hook should do on each check (`decideOnTick`), including the one-time nudge. Most tests are here. |
 | `stop.ts` | The Stop hook: decide under the state lock, wait, then answer Claude Code. |
 | `prompt-submit.ts` | The UserPromptSubmit hook: marks the session busy. |
 | `output.ts` | Turns a delivery into what each mode needs: exit 2 + stderr (rewake) or `additionalContext` JSON (blocking). |
@@ -109,7 +109,7 @@ Claude Code runs the built scripts in `dist/bin/` (ADR 0004). Read the source in
 | `PROJECT_BRIEF.md` | The why and the what: problem, solution, message protocol, stages, safety rules. |
 | `plans/stage-1.md` | The current plan, milestone by milestone (M0–M5). |
 | `research/claude-code-mechanics.md` | What the Claude Code docs say about hooks, timeouts, Remote Control and more, and what the M1 spikes proved about each. |
-| `adr/` | Architecture Decision Records: one file per real design choice. `template.md` is the blank form. `0001`: TypeScript and npm workspaces. `0002`: how messages are delivered. `0003`: how the state file is stored. `0004`: how the hooks are launched. `0005`: why there's no background helper. `0006`: what `relay init` writes and how undo works. |
+| `adr/` | Architecture Decision Records: one file per real design choice. `template.md` is the blank form. `0001`: TypeScript and npm workspaces. `0002`: how messages are delivered. `0003`: how the state file is stored. `0004`: how the hooks are launched. `0005`: why there's no background helper. `0006`: what `relay init` writes and how undo works. `0007`: the one-time nudge when the lead's tag isn't first. |
 | `spikes/` | Write-ups of small experiments ("will this work?"), one file each, with real output pasted in. M1 ran seven: |
 | `spikes/001-stop-hook-continue-with-instruction.md` | Can a Stop hook hand Claude a new instruction? (Yes.) |
 | `spikes/002-stop-hook-continuation-cap.md` | The limit of 8 continuations in a row, and how to raise it. |

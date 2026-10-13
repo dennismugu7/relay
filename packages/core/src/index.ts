@@ -8,7 +8,7 @@
 /** The npm name of this package. Lets tests prove the package builds and loads. */
 export const PACKAGE_NAME = '@relay/core';
 
-export { parseTag, type Destination, type ParsedReply } from './tags.js';
+export { hasBuriedCodeTag, parseTag, type Destination, type ParsedReply } from './tags.js';
 export {
   CONFIG_FILE_NAME,
   ConfigError,

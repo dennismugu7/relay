@@ -250,6 +250,20 @@ describe('log', () => {
     expect(lines.filter((l) => /^\d{4}-\d{2}-\d{2}$/.test(l))).toHaveLength(2);
   });
 
+  it('labels a nudge as such, not as a handoff', () => {
+    const [, line] = formatLog([
+      {
+        time: '2026-10-13T10:00:00.000Z',
+        project: 'a',
+        kind: 'nudge',
+        from: 'lead',
+        to: 'lead',
+        message: 'Looks good. TO CODE: x',
+      },
+    ]);
+    expect(line).toMatch(/^\S+ {2}nudge {12}Looks good\. TO CODE: x$/);
+  });
+
   it('shortens long messages to one line', () => {
     expect(oneLine('a  b\n\nc')).toBe('a b c');
     expect(oneLine('x'.repeat(150))).toHaveLength(100);

@@ -284,6 +284,56 @@ describe('re-arm', () => {
   });
 });
 
+describe('the nudge (lead wrote before its tag)', () => {
+  const buried = 'Task 1 checks out.\n\nTO CODE: now add a test';
+  const nudge =
+    "Relay: your reply didn't start with a tag. Resend it with the tag as the very first thing.";
+
+  it('wakes the lead at once with the nudge, then hands off the corrected resend', async () => {
+    const first = await runHook('stop', args('lead'), stopInput(buried), fakeDeps(100));
+    expect(first).toEqual({ exitCode: 2, stdout: '', stderr: nudge });
+    let s = await readState(stateDir);
+    expect(s.rounds).toBe(0);
+    expect(s.queue).toEqual([]);
+
+    const deps = fakeDeps(101, async (n) => {
+      if (n === 1) await change((st) => void enqueueMessage(st, 'builder', 'lead', 'test added'));
+    });
+    const second = await runHook('stop', args('lead'), stopInput('TO CODE: now add a test'), deps);
+    expect(second.stderr).toBe('Relay: report from the builder.\n\ntest added');
+
+    s = await readState(stateDir);
+    expect(s.rounds).toBe(1);
+    expect(await readActivity(stateDir)).toMatchObject([
+      { kind: 'nudge', from: 'lead', message: buried },
+      { kind: 'handoff', from: 'lead', to: 'builder', message: 'now add a test' },
+    ]);
+  });
+
+  it('a second wrong reply goes to Dennis and the session stops', async () => {
+    await runHook('stop', args('lead'), stopInput(buried), fakeDeps(100));
+    const again = await runHook('stop', args('lead'), stopInput(buried), fakeDeps(101));
+    expect(again).toEqual({ exitCode: 0, stdout: '', stderr: '' });
+    expect((await readActivity(stateDir)).map((e) => e.kind)).toEqual(['nudge', 'to-dennis']);
+  });
+
+  it('a quoted or code-block TO CODE: goes to Dennis without a nudge', async () => {
+    const quoted = 'The builder wrote:\n> TO CODE: do it\n\nExample:\n```\nTO CODE: x\n```';
+    const out = await runHook('stop', args('lead'), stopInput(quoted), fakeDeps(100));
+    expect(out.exitCode).toBe(0);
+    expect((await readActivity(stateDir)).map((e) => e.kind)).toEqual(['to-dennis']);
+  });
+
+  it('blocking mode nudges with additionalContext', async () => {
+    await writeConfig({ delivery: 'blocking' });
+    const out = await runHook('stop', args('lead'), stopInput(buried), fakeDeps(100));
+    expect(out.exitCode).toBe(0);
+    expect(JSON.parse(out.stdout)).toMatchObject({
+      hookSpecificOutput: { additionalContext: nudge },
+    });
+  });
+});
+
 describe('errors', () => {
   it.each([
     ['no --config', ['--role', 'lead'], 'Missing --config'],

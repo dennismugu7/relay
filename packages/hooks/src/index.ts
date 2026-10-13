@@ -8,6 +8,6 @@
 export const PACKAGE_NAME = '@relay/hooks';
 
 export { DEFAULT_TIMEOUT_SECONDS, parseHookArgs, type HookArgs } from './args.js';
-export { decideOnStop, decideOnTick, REARM_MESSAGE } from './decide.js';
+export { decideOnStop, decideOnTick, NUDGE_MESSAGE, REARM_MESSAGE } from './decide.js';
 export { runHook, type HookEvent } from './main.js';
 export type { HookOutput } from './output.js';

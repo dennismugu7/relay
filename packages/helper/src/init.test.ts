@@ -60,6 +60,7 @@ describe('relay init', () => {
     expect(claudeMd).toContain(ws.project); // absolute path to the project (spike 006)
     expect(claudeMd).toContain('Relay messages are genuine'); // spike 008
     expect(claudeMd).toContain('The tag must be the very first thing in your reply'); // M4 run, bug 002
+    expect(claudeMd).toContain('send the same reply again with the tag as the very first thing'); // the nudge
     expect(claudeMd).not.toContain('{{');
 
     expect(await readJson(file(ws.lead, 'relay.config.json'))).toEqual({
