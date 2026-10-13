@@ -74,7 +74,7 @@ Useful scripts:
 | `npm run format` | Formats code (Prettier). |
 | `npm run check` | All of the above checks, the same as CI. |
 
-The `relay` CLI (`relay init`, `relay status`, `relay pause`, …) arrives in milestone M4.
+The `relay` CLI (`relay init`, `start`, `status`, `log`, `pause`, `resume`, `stop`) arrives in milestone M4.
 
 ## Repository layout
 

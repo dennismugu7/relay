@@ -36,7 +36,7 @@ Drift is the enemy. Work on one thing, make it work, then move on.
 - npm workspaces monorepo:
   - `packages/core` — shared types, message tag parsing (`TO CODE:` / `TO DENNIS:`), state file helpers.
   - `packages/hooks` — the Stop hook script each session runs.
-  - `packages/helper` — the Relay Helper: a small background process plus a `relay` CLI (`relay init`, `relay start`, `relay status`, `relay pause`, `relay stop`, `relay log`).
+  - `packages/helper` — the Relay Helper: a small background process plus a `relay` CLI (`relay init`, `relay start`, `relay status`, `relay log`, `relay pause`, `relay resume`, `relay stop`).
 - Vitest for tests, ESLint + Prettier for style.
 - Must run on **Windows 11 with PowerShell**. Avoid bash-only commands. Use `path.join`, not hard-coded slashes.
 - GitHub Actions CI: install, lint, typecheck, test on `windows-latest` and `ubuntu-latest`.

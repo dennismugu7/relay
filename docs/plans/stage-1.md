@@ -32,6 +32,7 @@ At the end, write ADR 0002: **the delivery mechanism** — the blocking Stop-hoo
 
 ## M4 — Helper and CLI
 - `relay init <project-path>`: creates the sibling lead folder, writes the lead `CLAUDE.md` (from a template in `packages/helper/templates/`), writes both sessions' `.claude/settings.json` hook entries and the `/relay-start` skill, writes `relay.config.json`.
+- `relay start`: starts the Relay Helper for a project so handoffs can begin.
 - `relay status`, `relay log`, `relay pause`, `relay resume`, `relay stop`.
 - Tests for each command against a temp folder.
 

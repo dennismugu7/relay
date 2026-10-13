@@ -48,7 +48,7 @@ packages/<name>/
 |---|---|---|
 | `packages/core` | Shared types, the `TO CODE:` / `TO DENNIS:` tag parser, state and log file helpers. Used by the other two. | Skeleton (M0). Real code in M2. |
 | `packages/hooks` | The Stop hook script that Claude Code runs after every reply in the lead and builder sessions. | Skeleton (M0). Real code in M3. |
-| `packages/helper` | The Relay Helper background process and the `relay` CLI (`init`, `status`, `pause`, `stop`, `log`). | Skeleton (M0). Real code in M4. |
+| `packages/helper` | The Relay Helper background process and the `relay` CLI (`init`, `start`, `status`, `log`, `pause`, `resume`, `stop`). | Skeleton (M0). Real code in M4. |
 
 `dist/` folders appear after `npm run build`. They hold compiled JavaScript and are git-ignored.
 
