@@ -2,7 +2,7 @@
 
 _The builder keeps this up to date. It starts empty and grows with the repo._
 
-**Last updated:** 2026-10-13, after M2 (core library).
+**Last updated:** 2026-10-13, after M3 (hooks).
 
 A suggested reading order for someone new: `README.md` → `docs/PROJECT_BRIEF.md` → `docs/plans/stage-1.md` → this tour → the newest journal entry.
 
@@ -48,7 +48,7 @@ packages/<name>/
 | Package | Job | Status |
 |---|---|---|
 | `packages/core` | Shared types, the `TO CODE:` / `TO DENNIS:` tag parser, project config, and the state and activity files. Used by the other two. | Done (M2). See below. |
-| `packages/hooks` | The Stop hook script that Claude Code runs after every reply in the lead and builder sessions. | Skeleton (M0). Real code in M3. |
+| `packages/hooks` | The Stop and UserPromptSubmit hooks that Claude Code runs in the lead and builder sessions. | Done (M3). See below. |
 | `packages/helper` | The Relay Helper background process and the `relay` CLI (`init`, `start`, `status`, `log`, `pause`, `resume`, `stop`). | Skeleton (M0). Real code in M4. |
 
 ### Inside `packages/core/src/`
@@ -67,7 +67,22 @@ Each file has a matching `*.test.ts` next to it. Read them in this order:
 | `index.ts` | The package entry point; re-exports the public API. |
 | `__fixtures__/` | Test helpers: a small program the tests run as two processes at once. Left out of the build. |
 
-`dist/` folders appear after `npm run build`. They hold compiled JavaScript and are git-ignored.
+### Inside `packages/hooks/src/`
+
+Claude Code runs the built scripts in `dist/bin/` (ADR 0004). Read the source in this order:
+
+| File | What it does |
+|---|---|
+| `decide.ts` | The rules, as pure functions: what a finished reply means (`decideOnStop`) and what a waiting hook should do on each check (`decideOnTick`). Most tests are here. |
+| `stop.ts` | The Stop hook: decide under the state lock, wait, then answer Claude Code. |
+| `prompt-submit.ts` | The UserPromptSubmit hook: marks the session busy. |
+| `output.ts` | Turns a delivery into what each mode needs: exit 2 + stderr (rewake) or `additionalContext` JSON (blocking). |
+| `main.ts` | Shared entry point: arguments, input, config, and error handling (errors are also logged). |
+| `args.ts`, `input.ts` | Parse `--config/--role/--timeout` and the JSON Claude Code sends on stdin. |
+| `deps.ts` | The clock, `sleep`, PID and environment, passed in so tests can fake them. `RELAY_HOME` is read here. |
+| `bin/` | The tiny scripts Claude Code starts: `stop.ts`, `prompt-submit.ts`, and `run.ts` (shared stdin/stdout handling). |
+
+`dist/` folders appear after `npm run build`. `npm run check` and CI build first, because the hooks import the compiled ``relay/core`. They hold compiled JavaScript and are git-ignored.
 
 ## `docs/` — everything written
 
@@ -76,7 +91,7 @@ Each file has a matching `*.test.ts` next to it. Read them in this order:
 | `PROJECT_BRIEF.md` | The why and the what: problem, solution, message protocol, stages, safety rules. |
 | `plans/stage-1.md` | The current plan, milestone by milestone (M0–M5). |
 | `research/claude-code-mechanics.md` | What the Claude Code docs say about hooks, timeouts, Remote Control and more, and what the M1 spikes proved about each. |
-| `adr/` | Architecture Decision Records: one file per real design choice. `template.md` is the blank form. `0001`: TypeScript and npm workspaces. `0002`: how messages are delivered. `0003`: how the state file is stored. |
+| `adr/` | Architecture Decision Records: one file per real design choice. `template.md` is the blank form. `0001`: TypeScript and npm workspaces. `0002`: how messages are delivered. `0003`: how the state file is stored. `0004`: how the hooks are launched. |
 | `spikes/` | Write-ups of small experiments ("will this work?"), one file each, with real output pasted in. M1 ran seven: |
 | `spikes/001-stop-hook-continue-with-instruction.md` | Can a Stop hook hand Claude a new instruction? (Yes.) |
 | `spikes/002-stop-hook-continuation-cap.md` | The limit of 8 continuations in a row, and how to raise it. |
@@ -85,6 +100,9 @@ Each file has a matching `*.test.ts` next to it. Read them in this order:
 | `spikes/005-async-rewake-stop-hook.md` | `asyncRewake`: a background hook that wakes an idle session. |
 | `spikes/006-cross-session-messaging.md` | Claude Code's built-in messaging between sessions. |
 | `spikes/007-remote-control.md` | Whether the hooks still work when Dennis drives a session from his phone. |
+| `spikes/008-async-rewake-rearm.md` | M3: re-arming a background waiter before its timeout, and why sessions must be told about Relay. |
+| `spikes/009-busy-flag.md` | M3: the busy flag keeps a waiter from interrupting Dennis. |
+| `spikes/010-m3-real-run.md` | M3: two real sessions pass 3 rounds automatically, with both activity logs. |
 | `BACKLOG.md` | Ideas and side issues noticed while working, parked so they don't distract. |
 | `learning/` | Study material. See below. |
 
@@ -95,7 +113,7 @@ Each file has a matching `*.test.ts` next to it. Read them in this order:
 | `README.md` | How to use the learning material. |
 | `REPO_TOUR.md` | This file. |
 | `GLOSSARY.md` | Every technical term, in plain words. |
-| `journal/` | One entry per work session, named by date. First entry: `2026-10-12-repo-foundation.md`. The M1 spikes are explained in `2026-10-13-m1-spikes.md`, the core library in `2026-10-13-m2-core.md`. |
+| `journal/` | One entry per work session, named by date. First entry: `2026-10-12-repo-foundation.md`. The M1 spikes are explained in `2026-10-13-m1-spikes.md`, the core library in `2026-10-13-m2-core.md`, the hooks in `2026-10-13-m3-hooks.md`. |
 | `bugs/` | One entry per bug fixed. First: `001-gitignore-hid-spike-docs.md`. |
 | `templates/` | Blank forms for journal and bug entries. |
 
@@ -104,4 +122,5 @@ Each file has a matching `*.test.ts` next to it. Read them in this order:
 - `node_modules/`: installed packages (`npm install` creates it).
 - `packages/*/dist/`: build output.
 - `spikes/`: throwaway experiment code from M1, one folder per spike (`spikes/001/` …). Only the write-ups in `docs/spikes/` are kept. The scripts end in `.cjs` because the repo's `"type": "module"` would otherwise stop them using `require`.
+- `spikes/m3/`, `spikes/m3b/`: the hand-made lead and builder folders (config, settings, minimal `CLAUDE.md`) for the M3 real runs in spike 010.
 - `spikes/_pty/`: the test harness the spikes used. `pty.cjs` runs a real interactive `claude` inside a pseudo-terminal, saves what the screen shows to `screen.txt` / `screen.log`, and "presses keys" listed in `cmd.txt`. `launch.sh` starts it and accepts the folder-trust prompt. Its sessions work in `C:\Users\denni\relay-sandbox\`, outside the repo, so Relay's own `CLAUDE.md` doesn't load into them.

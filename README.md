@@ -4,7 +4,7 @@
 
 **Relay passes messages between two Claude Code sessions, a _lead_ and a _builder_, so a developer no longer has to copy and paste between them.**
 
-> **Status:** early development. Stage 1: M0 (repo foundation), M1 (spikes on how Claude Code delivers messages) and M2 (the core library) are done. Relay does not relay anything yet. See [Project status](#project-status).
+> **Status:** early development. Stage 1: M0 (repo foundation), M1 (spikes on how Claude Code delivers messages), M2 (the core library) and M3 (the hooks) are done. The hooks already pass messages between two real sessions when set up by hand; the `relay` CLI that sets them up comes next. See [Project status](#project-status).
 
 ## The problem
 
@@ -83,7 +83,7 @@ The `relay` CLI (`relay init`, `start`, `status`, `log`, `pause`, `resume`, `sto
 ```
 packages/
   core/     tag parsing, project config, shared state and activity log
-  hooks/    the Stop hook script each session runs
+  hooks/    the Stop and UserPromptSubmit hooks each session runs
   helper/   the Relay Helper background process and the relay CLI
 docs/       brief, plans, decisions (ADRs), spikes and the learning journal
 ```
@@ -100,7 +100,7 @@ A guided walk through every folder is in [docs/learning/REPO_TOUR.md](docs/learn
 
 | Stage | What it delivers | Status |
 |---|---|---|
-| 1. Engine on the PC | Hooks, Relay Helper, `relay` CLI; lead and builder run several rounds with no copy-paste | In progress: M0–M2 done; delivery design in [ADR 0002](docs/adr/0002-delivery-mechanism.md) |
+| 1. Engine on the PC | Hooks, Relay Helper, `relay` CLI; lead and builder run several rounds with no copy-paste | In progress: M0–M3 done; delivery design in [ADR 0002](docs/adr/0002-delivery-mechanism.md), first real run in [spike 010](docs/spikes/010-m3-real-run.md) |
 | 2. Phone alerts | `TO DENNIS:` and "stuck" alerts reach the phone | Planned |
 | 3. Android app | Status, activity timeline, Pause/Stop from the phone | Planned |
 

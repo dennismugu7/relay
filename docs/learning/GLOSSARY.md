@@ -16,7 +16,11 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **Builder** — The Claude Code session that writes the code, opened in the project folder.
 
+**Busy flag** — A per-session value in Relay's state file. The UserPromptSubmit hook sets it when a turn starts; while it's set, no waiter delivers, so Relay never interrupts Dennis. See spike 009.
+
 **CI (Continuous Integration)** — A server that automatically runs checks (lint, typecheck, tests) on every push. Relay uses GitHub Actions.
+
+**`claudeMdExcludes`** — A Claude Code setting listing CLAUDE.md files a session should not load. Used in the M3 test folders so Relay's own instructions stay out.
 
 **CLI (Command-Line Interface)** — A program you control by typing commands in a terminal, such as `relay status`.
 
@@ -29,6 +33,10 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 **CRLF / LF** — The invisible characters that end a line of text. Windows traditionally uses CRLF (`\r\n`); Linux and macOS use LF (`\n`). This repo uses LF everywhere (see `.gitattributes`).
 
 **Cross-session messaging** — A Claude Code feature that lets sessions on the same machine send each other messages with the `SendMessage` tool. Claude decides when to send. See spike 006.
+
+**Delivery mode** — How Relay hands a message to a session: `rewake` (a background hook wakes the idle session, the default) or `blocking` (the Stop hook waits and continues the turn, the fallback). Set in `relay.config.json`.
+
+**Dependency injection** — Passing a function the things it needs (a clock, a sleep function) instead of letting it reach for them itself, so tests can pass fakes.
 
 **Dev dependency** — A package needed only while developing (tests, linting), not when the program runs. Listed under `devDependencies` in `package.json`.
 
@@ -72,6 +80,8 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **Monorepo** — One Git repository that holds several packages.
 
+**Mutation testing** — Breaking the code on purpose to check that the tests notice. If nothing fails, the tests don't really guard that code.
+
 **Named pipe** — A Windows way for two programs on the same machine to talk, through a path like `\\.\pipe\name` that behaves like a file. Claude Code uses one as each session's message inbox on Windows.
 
 **Node.js** — A program that runs JavaScript outside the browser. Claude Code and Relay both run on it.
@@ -83,6 +93,8 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 **npm workspaces** — npm's built-in monorepo support: several packages in one repo, linked together by one `npm install`.
 
 **`npx`** — Runs a command from an npm package. Use `npx --no-install <tool>` so it never downloads an unexpected package.
+
+**owesReply** — A flag in Relay's state: set when a message is delivered to the builder, so its next reply goes back to the lead as the report.
 
 **Path traversal** — Using `..` or slashes in text that becomes a file path, to reach files outside the intended folder. Relay blocks it by allowing only safe characters in project names.
 
@@ -96,9 +108,13 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **Pseudo-terminal (pty)** — A fake terminal created by software. A program running inside it behaves as if a person were at a real terminal, while a script reads its screen and sends keystrokes.
 
+**Pure function** — A function whose result depends only on its inputs and that has no other effects (no files, clock or network). Easy to test.
+
 **Race condition** — A bug that depends on timing: the result changes depending on which of two simultaneous actions happens first.
 
 **Re-arm** — Starting a fresh waiting hook before the old one's timeout runs out, so the session never stops waiting for the next message. See spike 004.
+
+**Re-arm marker** — `rearmPending` in Relay's state: set just before a waiter asks for a `WAITING` turn, so the next Stop hook knows that reply isn't a real message.
 
 **Regular expression (regex)** — A small pattern language for matching text. `/^to\s+code:/i` matches "to code:" at the start of a string, in any case.
 
@@ -137,6 +153,8 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 **Type-aware linting** — Linting that uses the TypeScript compiler's type information to find more bugs, such as an un-awaited Promise.
 
 **TypeScript** — JavaScript plus types. A compiler checks the types and outputs plain JavaScript.
+
+**UserPromptSubmit hook** — A Claude Code hook that runs when a turn starts, before Claude sees the prompt. Relay uses it to set the busy flag.
 
 **Vitest** — The test runner used in this repo. Test files end in `.test.ts`.
 
