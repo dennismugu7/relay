@@ -71,7 +71,7 @@ packages/<name>/
 | `README.md` | How to use the learning material. |
 | `REPO_TOUR.md` | This file. |
 | `GLOSSARY.md` | Every technical term, in plain words. |
-| `journal/` | One entry per work session. First entry: `2026-10-12-repo-foundation.md`. |
+| `journal/` | One entry per work session, named by date. First entry: `2026-10-12-repo-foundation.md`. |
 | `bugs/` | One entry per bug fixed. Empty so far. |
 | `templates/` | Blank forms for journal and bug entries. |
 
