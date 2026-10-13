@@ -33,6 +33,8 @@ jobs:
       # `npm ci` installs exactly what package-lock.json lists.
       - run: npm ci
       - run: npm run format:check
+      # Build first: packages import each other's compiled output (ADR 0004).
+      - run: npm run build
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test

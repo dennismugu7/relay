@@ -2,7 +2,7 @@
   "name": "@relay/hooks",
   "version": "0.0.0",
   "private": true,
-  "description": "The Stop hook script each Relay-managed Claude Code session runs.",
+  "description": "The Stop and UserPromptSubmit hooks each Relay-managed Claude Code session runs.",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
@@ -10,5 +10,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@relay/core": "0.0.0"
   }
 }
