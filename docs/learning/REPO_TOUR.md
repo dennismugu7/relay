@@ -2,7 +2,7 @@
 
 _The builder keeps this up to date. It starts empty and grows with the repo._
 
-**Last updated:** 2026-10-13, after M1 (spikes).
+**Last updated:** 2026-10-13, after M2 (core library).
 
 A suggested reading order for someone new: `README.md` → `docs/PROJECT_BRIEF.md` → `docs/plans/stage-1.md` → this tour → the newest journal entry.
 
@@ -47,9 +47,25 @@ packages/<name>/
 
 | Package | Job | Status |
 |---|---|---|
-| `packages/core` | Shared types, the `TO CODE:` / `TO DENNIS:` tag parser, state and log file helpers. Used by the other two. | Skeleton (M0). Real code in M2. |
+| `packages/core` | Shared types, the `TO CODE:` / `TO DENNIS:` tag parser, project config, and the state and activity files. Used by the other two. | Done (M2). See below. |
 | `packages/hooks` | The Stop hook script that Claude Code runs after every reply in the lead and builder sessions. | Skeleton (M0). Real code in M3. |
 | `packages/helper` | The Relay Helper background process and the `relay` CLI (`init`, `start`, `status`, `log`, `pause`, `resume`, `stop`). | Skeleton (M0). Real code in M4. |
+
+### Inside `packages/core/src/`
+
+Each file has a matching `*.test.ts` next to it. Read them in this order:
+
+| File | What it does |
+|---|---|
+| `tags.ts` | `parseTag(reply)`: decides whether a reply goes to the builder (`TO CODE:`) or to Dennis (`TO DENNIS:` or no tag). |
+| `config.ts` | Loads and checks `relay.config.json`: name, builder and lead folders, max rounds, delivery mode. |
+| `paths.ts` | Where Relay keeps files: `%USERPROFILE%\.relay\<project>\`. |
+| `lock.ts` | `withLock`: a lock file so only one process changes the state at a time. |
+| `atomic.ts` | `writeFileAtomic`: write a temp file, then rename it, so a file is never half-written. |
+| `state.ts` | The shared `state.json` (queue, waiters, busy flags, re-arm marker, rounds, paused/stopped) and `updateState`, the only way to change it. |
+| `activity.ts` | The append-only `activity.jsonl` log. |
+| `index.ts` | The package entry point; re-exports the public API. |
+| `__fixtures__/` | Test helpers: a small program the tests run as two processes at once. Left out of the build. |
 
 `dist/` folders appear after `npm run build`. They hold compiled JavaScript and are git-ignored.
 
@@ -60,7 +76,7 @@ packages/<name>/
 | `PROJECT_BRIEF.md` | The why and the what: problem, solution, message protocol, stages, safety rules. |
 | `plans/stage-1.md` | The current plan, milestone by milestone (M0–M5). |
 | `research/claude-code-mechanics.md` | What the Claude Code docs say about hooks, timeouts, Remote Control and more, and what the M1 spikes proved about each. |
-| `adr/` | Architecture Decision Records: one file per real design choice. `template.md` is the blank form. Start with `0001-typescript-and-npm-workspaces.md`. |
+| `adr/` | Architecture Decision Records: one file per real design choice. `template.md` is the blank form. `0001`: TypeScript and npm workspaces. `0002`: how messages are delivered. `0003`: how the state file is stored. |
 | `spikes/` | Write-ups of small experiments ("will this work?"), one file each, with real output pasted in. M1 ran seven: |
 | `spikes/001-stop-hook-continue-with-instruction.md` | Can a Stop hook hand Claude a new instruction? (Yes.) |
 | `spikes/002-stop-hook-continuation-cap.md` | The limit of 8 continuations in a row, and how to raise it. |
@@ -79,7 +95,7 @@ packages/<name>/
 | `README.md` | How to use the learning material. |
 | `REPO_TOUR.md` | This file. |
 | `GLOSSARY.md` | Every technical term, in plain words. |
-| `journal/` | One entry per work session, named by date. First entry: `2026-10-12-repo-foundation.md`. The M1 spikes are explained in `2026-10-13-m1-spikes.md`. |
+| `journal/` | One entry per work session, named by date. First entry: `2026-10-12-repo-foundation.md`. The M1 spikes are explained in `2026-10-13-m1-spikes.md`, the core library in `2026-10-13-m2-core.md`. |
 | `bugs/` | One entry per bug fixed. First: `001-gitignore-hid-spike-docs.md`. |
 | `templates/` | Blank forms for journal and bug entries. |
 

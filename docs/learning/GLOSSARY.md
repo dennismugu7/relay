@@ -8,6 +8,8 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **`asyncRewake`** — A hook setting. The hook runs in the background instead of holding up the session. If it later exits with code 2, Claude Code wakes the session, even an idle one, and shows Claude the hook's stderr. See spike 005.
 
+**Atomic write** — Writing a file so readers see either all of the old content or all of the new, never a mix. Relay writes a temporary file and then renames it over the real one (`packages/core/src/atomic.ts`).
+
 **Background process** — A program that keeps running without a window or a terminal you type into, such as the Relay Helper.
 
 **Baton** — Relay's name for "whose turn it is". Only the session holding the baton works; the other waits. See `docs/PROJECT_BRIEF.md`.
@@ -42,6 +44,8 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **Exit code** — A number a program returns when it ends. `0` means success; anything else means failure. CI fails a step whose command exits with non-zero.
 
+**Fixture (test fixture)** — Code or data that exists only to support tests, such as `packages/core/src/__fixtures__/concurrent-worker.ts`.
+
 **Formatter** — A tool that rewrites code layout (spacing, quotes, line breaks) without changing what it does. This repo uses Prettier.
 
 **GitHub Actions** — GitHub's built-in CI service. Workflows live in `.github/workflows/`.
@@ -54,11 +58,15 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **Idle (session)** — A Claude Code session that has finished its reply and is waiting at the prompt with nothing running.
 
+**JSON Lines (`.jsonl`)** — A text file with one complete JSON object per line. Easy to append to. Relay's activity log uses it.
+
 **Lead** — The session that plans and reviews, opened in a sibling folder such as `app1-lead`. It sends work to the builder with `TO CODE:`.
 
 **Linter** — A tool that reads code and warns about likely bugs and bad patterns without running it.
 
 **Lock file** — `package-lock.json`. Records the exact version of every installed package so every machine gets the same ones.
+
+**Lost update** — When two processes read the same data, both change it, and the second save silently wipes out the first. Prevented in Relay by a lock.
 
 **Matrix (CI)** — A way to run the same CI job with different settings, such as each operating system and Node version.
 
@@ -76,6 +84,8 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **`npx`** — Runs a command from an npm package. Use `npx --no-install <tool>` so it never downloads an unexpected package.
 
+**Path traversal** — Using `..` or slashes in text that becomes a file path, to reach files outside the intended folder. Relay blocks it by allowing only safe characters in project names.
+
 **Peer dependency** — A package's statement of which versions of *another* package it works with, for example typescript-eslint needing TypeScript below 6.1.
 
 **PID (process ID)** — The number the operating system gives a running program. With it you can check whether the program is still alive, or stop it. `tasklist` shows them on Windows.
@@ -86,7 +96,11 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **Pseudo-terminal (pty)** — A fake terminal created by software. A program running inside it behaves as if a person were at a real terminal, while a script reads its screen and sends keystrokes.
 
+**Race condition** — A bug that depends on timing: the result changes depending on which of two simultaneous actions happens first.
+
 **Re-arm** — Starting a fresh waiting hook before the old one's timeout runs out, so the session never stops waiting for the next message. See spike 004.
+
+**Regular expression (regex)** — A small pattern language for matching text. `/^to\s+code:/i` matches "to code:" at the start of a string, in any case.
 
 **Remote Control** — A Claude Code feature that connects a session running on the PC to the Claude mobile app, so it can be used from a phone.
 
@@ -95,6 +109,10 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 **Session (Claude Code)** — One running Claude Code conversation in a terminal.
 
 **Spike** — A small, throwaway experiment that answers one "will this work?" question before real code depends on it. Written up in `docs/spikes/`.
+
+**Stale lock** — A lock file left behind by a process that crashed while holding it. Relay treats a lock older than 10 seconds as stale and removes it.
+
+**State file** — Relay's `state.json`: the shared record of the message queue, waiters, flags and round counter for one project.
 
 **Stdin / stdout / stderr** — A program's three standard streams: input (stdin), normal output (stdout) and error output (stderr). Claude Code sends a hook its input as JSON on stdin and reads its answer from stdout or stderr.
 
@@ -110,7 +128,11 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **tsconfig** — A `tsconfig.json` file: settings telling the TypeScript compiler how to check and build code.
 
+**tsx** — A tool that lets Node.js run TypeScript files directly, without building them first. Relay's tests use it to start TypeScript child processes.
+
 **Type checking / typecheck** — Having the TypeScript compiler check that values are used consistently with their types, without running the code.
+
+**Type guard** — A TypeScript function returning `value is SomeType`. When it returns true, TypeScript treats the value as that type afterwards.
 
 **Type-aware linting** — Linting that uses the TypeScript compiler's type information to find more bugs, such as an un-awaited Promise.
 

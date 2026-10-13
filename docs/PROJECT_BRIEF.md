@@ -32,6 +32,8 @@ The builder's replies always go back to the lead.
 One **round** = one `TO CODE:` message delivered to the builder, plus the builder's report returned to the lead. The round counter **resets whenever control returns to Dennis**, that is, whenever the lead sends a `TO DENNIS:` or untagged reply. The max-rounds limit (see Safety rules) counts rounds since the last reset.
 
 ### The baton (main approach — to be proven in Stage 1 spikes)
+> **Update 2026-10-13:** the M1 spikes refined this. The accepted design is an `asyncRewake` Stop hook that wakes the idle session, with this blocking baton as the fallback. See [ADR 0002](adr/0002-delivery-mechanism.md).
+
 Each session has a **Stop hook**: a script Claude Code runs whenever Claude finishes a reply. The hook reads `last_assistant_message` from its input.
 - Lead finishes with `TO CODE:` → hook hands the message to the Relay Helper, then **waits** until the builder's report arrives, and returns it with `{"decision":"block","reason":"<report>"}` so the lead continues with the report.
 - Builder finishes → hook hands the report to the Helper, then waits for the next `TO CODE:` message and returns it the same way.
