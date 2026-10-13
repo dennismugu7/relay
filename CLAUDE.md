@@ -27,6 +27,7 @@ Drift is the enemy. Work on one thing, make it work, then move on.
 - **No side quests.** If you notice something else worth doing (a refactor, a nicer pattern, a feature idea, an unrelated bug), do not do it. Add one line to `docs/BACKLOG.md` and carry on.
 - **Stay inside the plan.** Only build what the current milestone in `docs/plans/` asks for. No extra features, options, or "while I'm here" changes.
 - **Stuck means stop.** If the same approach fails three times, stop, explain what you tried, and ask Dennis under **Needs Dennis** instead of trying a fourth workaround.
+- **Do it yourself, don't hand it to Dennis.** If a step can be done by you (commands, git, GitHub via `gh`, file edits, looking things up), do it. Ask for approval if it's risky or irreversible, but don't give Dennis chores. Only ask Dennis for things that truly need him: decisions, secrets, his accounts' sign-in, or physical actions like using his phone.
 - **Report against the goal.** Every report starts with: the goal, whether it's done, and the proof (test output, command output).
 
 ## Tech stack (Stage 1)
