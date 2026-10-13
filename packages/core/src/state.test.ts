@@ -45,8 +45,8 @@ describe('readState', () => {
       version: 1,
       queue: [],
       sessions: {
-        lead: { busy: false, waiter: null, rearmPending: false },
-        builder: { busy: false, waiter: null, rearmPending: false },
+        lead: { busy: false, waiter: null, rearmPending: false, owesReply: false },
+        builder: { busy: false, waiter: null, rearmPending: false, owesReply: false },
       },
       rounds: 0,
       paused: false,

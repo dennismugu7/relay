@@ -14,12 +14,13 @@ import type { Role } from './state.js';
 
 /** What happened. */
 export type ActivityKind =
-  | 'handoff' // a message was delivered from one session to the other
+  | 'handoff' // a message was passed from one session to the other (queued for delivery)
   | 'to-dennis' // control returned to Dennis
   | 'paused'
   | 'resumed'
   | 'stopped'
-  | 'max-rounds'; // the round limit was reached
+  | 'max-rounds' // the round limit was reached
+  | 'error'; // a hook failed; `message` says why
 
 export interface ActivityEntry {
   /** When it happened (ISO 8601 time). */

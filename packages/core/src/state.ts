@@ -42,6 +42,12 @@ export interface SessionState {
    * ("WAITING") as a message for Dennis. See ADR 0002's amendment.
    */
   rearmPending: boolean;
+  /**
+   * True after Relay delivered a message to this session: its next reply is
+   * the answer and goes back to the other session. Used for the builder, so a
+   * chat Dennis has with the builder directly is not forwarded as a report.
+   */
+  owesReply: boolean;
 }
 
 /** A message waiting to be delivered. */
@@ -75,7 +81,12 @@ export class StateError extends Error {
 
 /** The state of a project that has never run. */
 export function initialState(): RelayState {
-  const idle = (): SessionState => ({ busy: false, waiter: null, rearmPending: false });
+  const idle = (): SessionState => ({
+    busy: false,
+    waiter: null,
+    rearmPending: false,
+    owesReply: false,
+  });
   return {
     version: 1,
     queue: [],
@@ -154,7 +165,7 @@ export async function updateState(
 
 // ---------------------------------------------------------------------------
 // Helpers for use inside `updateState`. Each one changes the state it's given.
-// Simple flags (busy, rearmPending, paused, stopped) are set directly, e.g.
+// Simple flags (busy, rearmPending, owesReply, paused, stopped) are set directly, e.g.
 //   await updateState(dir, (s) => { s.sessions.lead.busy = true; });
 // ---------------------------------------------------------------------------
 
