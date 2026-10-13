@@ -2,7 +2,13 @@
 
 _Plain-English definitions of every technical term used in this repo, in alphabetical order. The builder adds terms as they appear._
 
+**`additionalContext`** — A field a hook can return to add text to Claude's context. From a Stop hook, it makes Claude keep going and act on the text. Relay's preferred way to hand Claude a message (spike 001).
+
 **ADR (Architecture Decision Record)** — A short document recording one design decision: the situation, the options, what was chosen and why. Kept in `docs/adr/`. It helps future readers understand *why* the code is the way it is.
+
+**`asyncRewake`** — A hook setting. The hook runs in the background instead of holding up the session. If it later exits with code 2, Claude Code wakes the session, even an idle one, and shows Claude the hook's stderr. See spike 005.
+
+**Background process** — A program that keeps running without a window or a terminal you type into, such as the Relay Helper.
 
 **Baton** — Relay's name for "whose turn it is". Only the session holding the baton works; the other waits. See `docs/PROJECT_BRIEF.md`.
 
@@ -14,15 +20,21 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **Commit** — A saved snapshot of changes in Git, with a message explaining it.
 
+**Continuation cap** — Claude Code's limit on how many times in a row a Stop hook may make Claude keep going in one turn: 8 by default, raised with `CLAUDE_CODE_STOP_HOOK_BLOCK_CAP`. It protects against endless loops. See spike 002.
+
 **Conventional Commits** — A rule for commit messages: start with a type such as `feat:`, `fix:`, `docs:`, `test:`, `refactor:` or `chore:`, so history is easy to scan.
 
 **CRLF / LF** — The invisible characters that end a line of text. Windows traditionally uses CRLF (`\r\n`); Linux and macOS use LF (`\n`). This repo uses LF everywhere (see `.gitattributes`).
 
+**Cross-session messaging** — A Claude Code feature that lets sessions on the same machine send each other messages with the `SendMessage` tool. Claude decides when to send. See spike 006.
+
 **Dev dependency** — A package needed only while developing (tests, linting), not when the program runs. Listed under `devDependencies` in `package.json`.
+
+**End of life (EOL)** — The date after which a software version gets no more fixes, including security fixes.
 
 **`engines`** — A field in `package.json` stating which Node.js versions a package supports.
 
-**End of life (EOL)** — The date after which a software version gets no more fixes, including security fixes.
+**Environment variable** — A named value a program inherits from whatever started it, such as `PATH`. A child process gets a copy of its parent's. Example: `CLAUDE_CODE_STOP_HOOK_BLOCK_CAP=50`.
 
 **ES modules (ESM)** — The modern JavaScript module system, using `import` and `export`. Turned on for this repo by `"type": "module"` in `package.json`.
 
@@ -34,7 +46,13 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **GitHub Actions** — GitHub's built-in CI service. Workflows live in `.github/workflows/`.
 
+**Harness (test harness)** — Helper code that runs the thing under test and controls or watches it. Relay's spikes used `spikes/_pty/pty.cjs` to drive real Claude Code sessions.
+
+**Heartbeat** — A small "I'm still alive" signal written at regular intervals, such as a log line every 5 seconds. When the heartbeats stop, you know the process died.
+
 **Hook (Claude Code)** — A script Claude Code runs automatically at certain moments, such as when Claude finishes a reply (the Stop hook). Relay is built on hooks.
+
+**Idle (session)** — A Claude Code session that has finished its reply and is waiting at the prompt with nothing running.
 
 **Lead** — The session that plans and reviews, opened in a sibling folder such as `app1-lead`. It sends work to the builder with `TO CODE:`.
 
@@ -45,6 +63,8 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 **Matrix (CI)** — A way to run the same CI job with different settings, such as each operating system and Node version.
 
 **Monorepo** — One Git repository that holds several packages.
+
+**Named pipe** — A Windows way for two programs on the same machine to talk, through a path like `\\.\pipe\name` that behaves like a file. Claude Code uses one as each session's message inbox on Windows.
 
 **Node.js** — A program that runs JavaScript outside the browser. Claude Code and Relay both run on it.
 
@@ -58,9 +78,15 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **Peer dependency** — A package's statement of which versions of *another* package it works with, for example typescript-eslint needing TypeScript below 6.1.
 
+**PID (process ID)** — The number the operating system gives a running program. With it you can check whether the program is still alive, or stop it. `tasklist` shows them on Windows.
+
 **Pinning (a version)** — Restricting a dependency to a version range on purpose, such as `~6.0.3` (any 6.0.x from 6.0.3 up), to avoid an incompatible upgrade.
 
 **Prettier** — A code formatter.
+
+**Pseudo-terminal (pty)** — A fake terminal created by software. A program running inside it behaves as if a person were at a real terminal, while a script reads its screen and sends keystrokes.
+
+**Re-arm** — Starting a fresh waiting hook before the old one's timeout runs out, so the session never stops waiting for the next message. See spike 004.
 
 **Remote Control** — A Claude Code feature that connects a session running on the PC to the Claude mobile app, so it can be used from a phone.
 
@@ -70,9 +96,17 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **Spike** — A small, throwaway experiment that answers one "will this work?" question before real code depends on it. Written up in `docs/spikes/`.
 
+**Stdin / stdout / stderr** — A program's three standard streams: input (stdin), normal output (stdout) and error output (stderr). Claude Code sends a hook its input as JSON on stdin and reads its answer from stdout or stderr.
+
 **Stop hook** — A Claude Code hook that runs every time Claude finishes a reply. It can let Claude stop, or tell Claude to keep going with a reason. Relay's core mechanism.
 
 **Strict mode (TypeScript)** — A group of compiler checks (`"strict": true`) that catch more mistakes, especially values that might be `null` or `undefined`.
+
+**System reminder** — Text Claude Code adds to the conversation for Claude to read, as opposed to text typed by the user. An `asyncRewake` hook's message reaches Claude this way.
+
+**Timeout (hook)** — How many seconds Claude Code lets a hook run before killing it, set per hook with `timeout`. A killed hook's output is thrown away (spike 004).
+
+**Transcript** — The file where Claude Code records a session's conversation and events, one JSON object per line (`.jsonl`), under `~/.claude/projects/`.
 
 **tsconfig** — A `tsconfig.json` file: settings telling the TypeScript compiler how to check and build code.
 
@@ -83,5 +117,7 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 **TypeScript** — JavaScript plus types. A compiler checks the types and outputs plain JavaScript.
 
 **Vitest** — The test runner used in this repo. Test files end in `.test.ts`.
+
+**Waiter** — In Relay's spikes, a hook process that sits waiting for the next message for its session, then delivers it.
 
 **Workspace** — One package inside an npm workspaces monorepo, such as `packages/core`.

@@ -2,7 +2,7 @@
 
 _The builder keeps this up to date. It starts empty and grows with the repo._
 
-**Last updated:** 2026-10-12, after M0 (repo foundation).
+**Last updated:** 2026-10-13, after M1 (spikes).
 
 A suggested reading order for someone new: `README.md` → `docs/PROJECT_BRIEF.md` → `docs/plans/stage-1.md` → this tour → the newest journal entry.
 
@@ -59,9 +59,16 @@ packages/<name>/
 |---|---|
 | `PROJECT_BRIEF.md` | The why and the what: problem, solution, message protocol, stages, safety rules. |
 | `plans/stage-1.md` | The current plan, milestone by milestone (M0–M5). |
-| `research/claude-code-mechanics.md` | What the Claude Code docs say about hooks, timeouts, Remote Control and more, and what still needs testing. |
+| `research/claude-code-mechanics.md` | What the Claude Code docs say about hooks, timeouts, Remote Control and more, and what the M1 spikes proved about each. |
 | `adr/` | Architecture Decision Records: one file per real design choice. `template.md` is the blank form. Start with `0001-typescript-and-npm-workspaces.md`. |
-| `spikes/` | Write-ups of small experiments ("will this work?"). Empty until M1. |
+| `spikes/` | Write-ups of small experiments ("will this work?"), one file each, with real output pasted in. M1 ran seven: |
+| `spikes/001-stop-hook-continue-with-instruction.md` | Can a Stop hook hand Claude a new instruction? (Yes.) |
+| `spikes/002-stop-hook-continuation-cap.md` | The limit of 8 continuations in a row, and how to raise it. |
+| `spikes/003-long-waiting-stop-hook.md` | A Stop hook that waits 15 minutes: what the screen shows, what Esc and typing do. |
+| `spikes/004-stop-hook-timeout-expiry.md` | What happens when a waiting hook hits its timeout, and how to re-arm before it. |
+| `spikes/005-async-rewake-stop-hook.md` | `asyncRewake`: a background hook that wakes an idle session. |
+| `spikes/006-cross-session-messaging.md` | Claude Code's built-in messaging between sessions. |
+| `spikes/007-remote-control.md` | Whether the hooks still work when Dennis drives a session from his phone. |
 | `BACKLOG.md` | Ideas and side issues noticed while working, parked so they don't distract. |
 | `learning/` | Study material. See below. |
 
@@ -72,7 +79,7 @@ packages/<name>/
 | `README.md` | How to use the learning material. |
 | `REPO_TOUR.md` | This file. |
 | `GLOSSARY.md` | Every technical term, in plain words. |
-| `journal/` | One entry per work session, named by date. First entry: `2026-10-12-repo-foundation.md`. |
+| `journal/` | One entry per work session, named by date. First entry: `2026-10-12-repo-foundation.md`. The M1 spikes are explained in `2026-10-13-m1-spikes.md`. |
 | `bugs/` | One entry per bug fixed. First: `001-gitignore-hid-spike-docs.md`. |
 | `templates/` | Blank forms for journal and bug entries. |
 
@@ -80,4 +87,5 @@ packages/<name>/
 
 - `node_modules/`: installed packages (`npm install` creates it).
 - `packages/*/dist/`: build output.
-- `spikes/`: throwaway experiment folders from M1. Only their write-ups in `docs/spikes/` are kept.
+- `spikes/`: throwaway experiment code from M1, one folder per spike (`spikes/001/` …). Only the write-ups in `docs/spikes/` are kept. The scripts end in `.cjs` because the repo's `"type": "module"` would otherwise stop them using `require`.
+- `spikes/_pty/`: the test harness the spikes used. `pty.cjs` runs a real interactive `claude` inside a pseudo-terminal, saves what the screen shows to `screen.txt` / `screen.log`, and "presses keys" listed in `cmd.txt`. `launch.sh` starts it and accepts the folder-trust prompt. Its sessions work in `C:\Users\denni\relay-sandbox\`, outside the repo, so Relay's own `CLAUDE.md` doesn't load into them.
