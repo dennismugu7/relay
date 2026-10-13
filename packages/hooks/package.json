@@ -1,6 +1,6 @@
 {
   "name": "@relay/hooks",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "The Stop and UserPromptSubmit hooks each Relay-managed Claude Code session runs.",
   "license": "MIT",
@@ -12,6 +12,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@relay/core": "0.0.0"
+    "@relay/core": "0.1.0"
   }
 }
