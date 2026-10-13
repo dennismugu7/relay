@@ -4,7 +4,7 @@
 
 **Relay passes messages between two Claude Code sessions, a _lead_ and a _builder_, so a developer no longer has to copy and paste between them.**
 
-> **Status:** early development. Stage 1, milestone M0 (repo foundation) is done. Relay does not relay anything yet. See [Project status](#project-status).
+> **Status:** early development. Stage 1: M0 (repo foundation) and M1 (spikes on how Claude Code delivers messages) are done. Relay does not relay anything yet. See [Project status](#project-status).
 
 ## The problem
 
@@ -100,7 +100,7 @@ A guided walk through every folder is in [docs/learning/REPO_TOUR.md](docs/learn
 
 | Stage | What it delivers | Status |
 |---|---|---|
-| 1. Engine on the PC | Hooks, Relay Helper, `relay` CLI; lead and builder run several rounds with no copy-paste | In progress: M0 done |
+| 1. Engine on the PC | Hooks, Relay Helper, `relay` CLI; lead and builder run several rounds with no copy-paste | In progress: M0 and M1 done; delivery design proposed in [ADR 0002](docs/adr/0002-delivery-mechanism.md) |
 | 2. Phone alerts | `TO DENNIS:` and "stuck" alerts reach the phone | Planned |
 | 3. Android app | Status, activity timeline, Pause/Stop from the phone | Planned |
 
