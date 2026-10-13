@@ -64,6 +64,8 @@ _Plain-English definitions of every technical term used in this repo, in alphabe
 
 **Remote Control** — A Claude Code feature that connects a session running on the PC to the Claude mobile app, so it can be used from a phone.
 
+**Round** — One `TO CODE:` message delivered to the builder plus its report returned to the lead. The count resets whenever control returns to Dennis. See `docs/PROJECT_BRIEF.md`.
+
 **Session (Claude Code)** — One running Claude Code conversation in a terminal.
 
 **Spike** — A small, throwaway experiment that answers one "will this work?" question before real code depends on it. Written up in `docs/spikes/`.

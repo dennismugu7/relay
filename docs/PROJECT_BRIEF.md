@@ -28,6 +28,9 @@ The lead tags every reply:
 
 The builder's replies always go back to the lead.
 
+### Rounds
+One **round** = one `TO CODE:` message delivered to the builder, plus the builder's report returned to the lead. The round counter **resets whenever control returns to Dennis**, that is, whenever the lead sends a `TO DENNIS:` or untagged reply. The max-rounds limit (see Safety rules) counts rounds since the last reset.
+
 ### The baton (main approach — to be proven in Stage 1 spikes)
 Each session has a **Stop hook**: a script Claude Code runs whenever Claude finishes a reply. The hook reads `last_assistant_message` from its input.
 - Lead finishes with `TO CODE:` → hook hands the message to the Relay Helper, then **waits** until the builder's report arrives, and returns it with `{"decision":"block","reason":"<report>"}` so the lead continues with the report.
@@ -48,7 +51,7 @@ Only one session works at a time. The waiting one is paused, not spending usage.
 
 ## Safety rules
 - Relay never handles secrets. The builder names what's needed; Dennis enters values himself.
-- Max rounds per task (default 20), then stop and notify.
+- Max rounds per task (default 20), then stop and notify. A "task" is the stretch between two returns of control to Dennis (see Rounds).
 - Pause and Stop always work and are checked before every handoff.
 - Every handoff is logged with timestamp, project, direction and message.
 
